@@ -63,13 +63,9 @@ function TrackDetail() {
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Tracking Number</div>
                   <div className="text-display text-2xl font-bold md:text-3xl">{data.shipment.tracking_number}</div>
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${statusBadgeClass(data.shipment.current_status)}"
-                    style={{}}
-                  >
-                    <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${statusBadgeClass(data.shipment.current_status)}`}>
-                      {STATUS_LABELS[data.shipment.current_status]}
-                    </span>
-                  </div>
+                  <span className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${statusBadgeClass(data.shipment.current_status)}`}>
+                    {STATUS_LABELS[data.shipment.current_status]}
+                  </span>
                 </div>
                 <div className="text-right text-sm">
                   <div className="text-muted-foreground">Current Location</div>

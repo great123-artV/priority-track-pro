@@ -9,38 +9,265 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as TrackRouteImport } from './routes/track'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyReceiptRouteImport } from './routes/verify.$receipt'
+import { Route as TrackTrackingRouteImport } from './routes/track.$tracking'
+import { Route as ReceiptIdRouteImport } from './routes/receipt.$id'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedMovementsRouteImport } from './routes/_authenticated/movements'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
+import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated/branches'
+import { Route as AuthenticatedShipmentsIndexRouteImport } from './routes/_authenticated/shipments.index'
+import { Route as AuthenticatedShipmentsNewRouteImport } from './routes/_authenticated/shipments.new'
+import { Route as AuthenticatedShipmentsIdRouteImport } from './routes/_authenticated/shipments.$id'
 
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VerifyReceiptRoute = VerifyReceiptRouteImport.update({
+  id: '/$receipt',
+  path: '/$receipt',
+  getParentRoute: () => VerifyRoute,
+} as any)
+const TrackTrackingRoute = TrackTrackingRouteImport.update({
+  id: '/$tracking',
+  path: '/$tracking',
+  getParentRoute: () => TrackRoute,
+} as any)
+const ReceiptIdRoute = ReceiptIdRouteImport.update({
+  id: '/receipt/$id',
+  path: '/receipt/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMovementsRoute = AuthenticatedMovementsRouteImport.update({
+  id: '/movements',
+  path: '/movements',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedBranchesRoute = AuthenticatedBranchesRouteImport.update({
+  id: '/branches',
+  path: '/branches',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedShipmentsIndexRoute =
+  AuthenticatedShipmentsIndexRouteImport.update({
+    id: '/shipments/',
+    path: '/shipments/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedShipmentsNewRoute =
+  AuthenticatedShipmentsNewRouteImport.update({
+    id: '/shipments/new',
+    path: '/shipments/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedShipmentsIdRoute =
+  AuthenticatedShipmentsIdRouteImport.update({
+    id: '/shipments/$id',
+    path: '/shipments/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/track': typeof TrackRouteWithChildren
+  '/verify': typeof VerifyRouteWithChildren
+  '/branches': typeof AuthenticatedBranchesRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/movements': typeof AuthenticatedMovementsRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/staff': typeof AuthenticatedStaffRoute
+  '/receipt/$id': typeof ReceiptIdRoute
+  '/track/$tracking': typeof TrackTrackingRoute
+  '/verify/$receipt': typeof VerifyReceiptRoute
+  '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/shipments/new': typeof AuthenticatedShipmentsNewRoute
+  '/shipments/': typeof AuthenticatedShipmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/track': typeof TrackRouteWithChildren
+  '/verify': typeof VerifyRouteWithChildren
+  '/branches': typeof AuthenticatedBranchesRoute
+  '/customers': typeof AuthenticatedCustomersRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/movements': typeof AuthenticatedMovementsRoute
+  '/reports': typeof AuthenticatedReportsRoute
+  '/staff': typeof AuthenticatedStaffRoute
+  '/receipt/$id': typeof ReceiptIdRoute
+  '/track/$tracking': typeof TrackTrackingRoute
+  '/verify/$receipt': typeof VerifyReceiptRoute
+  '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/shipments/new': typeof AuthenticatedShipmentsNewRoute
+  '/shipments': typeof AuthenticatedShipmentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/track': typeof TrackRouteWithChildren
+  '/verify': typeof VerifyRouteWithChildren
+  '/_authenticated/branches': typeof AuthenticatedBranchesRoute
+  '/_authenticated/customers': typeof AuthenticatedCustomersRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/movements': typeof AuthenticatedMovementsRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/staff': typeof AuthenticatedStaffRoute
+  '/receipt/$id': typeof ReceiptIdRoute
+  '/track/$tracking': typeof TrackTrackingRoute
+  '/verify/$receipt': typeof VerifyReceiptRoute
+  '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
+  '/_authenticated/shipments/new': typeof AuthenticatedShipmentsNewRoute
+  '/_authenticated/shipments/': typeof AuthenticatedShipmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/track'
+    | '/verify'
+    | '/branches'
+    | '/customers'
+    | '/dashboard'
+    | '/movements'
+    | '/reports'
+    | '/staff'
+    | '/receipt/$id'
+    | '/track/$tracking'
+    | '/verify/$receipt'
+    | '/shipments/$id'
+    | '/shipments/new'
+    | '/shipments/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/track'
+    | '/verify'
+    | '/branches'
+    | '/customers'
+    | '/dashboard'
+    | '/movements'
+    | '/reports'
+    | '/staff'
+    | '/receipt/$id'
+    | '/track/$tracking'
+    | '/verify/$receipt'
+    | '/shipments/$id'
+    | '/shipments/new'
+    | '/shipments'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/track'
+    | '/verify'
+    | '/_authenticated/branches'
+    | '/_authenticated/customers'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/movements'
+    | '/_authenticated/reports'
+    | '/_authenticated/staff'
+    | '/receipt/$id'
+    | '/track/$tracking'
+    | '/verify/$receipt'
+    | '/_authenticated/shipments/$id'
+    | '/_authenticated/shipments/new'
+    | '/_authenticated/shipments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  TrackRoute: typeof TrackRouteWithChildren
+  VerifyRoute: typeof VerifyRouteWithChildren
+  ReceiptIdRoute: typeof ReceiptIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +275,148 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/verify/$receipt': {
+      id: '/verify/$receipt'
+      path: '/$receipt'
+      fullPath: '/verify/$receipt'
+      preLoaderRoute: typeof VerifyReceiptRouteImport
+      parentRoute: typeof VerifyRoute
+    }
+    '/track/$tracking': {
+      id: '/track/$tracking'
+      path: '/$tracking'
+      fullPath: '/track/$tracking'
+      preLoaderRoute: typeof TrackTrackingRouteImport
+      parentRoute: typeof TrackRoute
+    }
+    '/receipt/$id': {
+      id: '/receipt/$id'
+      path: '/receipt/$id'
+      fullPath: '/receipt/$id'
+      preLoaderRoute: typeof ReceiptIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/movements': {
+      id: '/_authenticated/movements'
+      path: '/movements'
+      fullPath: '/movements'
+      preLoaderRoute: typeof AuthenticatedMovementsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/customers': {
+      id: '/_authenticated/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthenticatedCustomersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/branches': {
+      id: '/_authenticated/branches'
+      path: '/branches'
+      fullPath: '/branches'
+      preLoaderRoute: typeof AuthenticatedBranchesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shipments/': {
+      id: '/_authenticated/shipments/'
+      path: '/shipments'
+      fullPath: '/shipments/'
+      preLoaderRoute: typeof AuthenticatedShipmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shipments/new': {
+      id: '/_authenticated/shipments/new'
+      path: '/shipments/new'
+      fullPath: '/shipments/new'
+      preLoaderRoute: typeof AuthenticatedShipmentsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shipments/$id': {
+      id: '/_authenticated/shipments/$id'
+      path: '/shipments/$id'
+      fullPath: '/shipments/$id'
+      preLoaderRoute: typeof AuthenticatedShipmentsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
+  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedMovementsRoute: typeof AuthenticatedMovementsRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
+  AuthenticatedShipmentsIdRoute: typeof AuthenticatedShipmentsIdRoute
+  AuthenticatedShipmentsNewRoute: typeof AuthenticatedShipmentsNewRoute
+  AuthenticatedShipmentsIndexRoute: typeof AuthenticatedShipmentsIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
+  AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedMovementsRoute: AuthenticatedMovementsRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedStaffRoute: AuthenticatedStaffRoute,
+  AuthenticatedShipmentsIdRoute: AuthenticatedShipmentsIdRoute,
+  AuthenticatedShipmentsNewRoute: AuthenticatedShipmentsNewRoute,
+  AuthenticatedShipmentsIndexRoute: AuthenticatedShipmentsIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface TrackRouteChildren {
+  TrackTrackingRoute: typeof TrackTrackingRoute
+}
+
+const TrackRouteChildren: TrackRouteChildren = {
+  TrackTrackingRoute: TrackTrackingRoute,
+}
+
+const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
+
+interface VerifyRouteChildren {
+  VerifyReceiptRoute: typeof VerifyReceiptRoute
+}
+
+const VerifyRouteChildren: VerifyRouteChildren = {
+  VerifyReceiptRoute: VerifyReceiptRoute,
+}
+
+const VerifyRouteWithChildren =
+  VerifyRoute._addFileChildren(VerifyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  TrackRoute: TrackRouteWithChildren,
+  VerifyRoute: VerifyRouteWithChildren,
+  ReceiptIdRoute: ReceiptIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
