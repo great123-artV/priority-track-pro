@@ -32,8 +32,12 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/10 relative">
         <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/60 md:flex-row">
+          <Link
+            to="/auth"
+            className="absolute bottom-2 left-2 h-1 w-1 rounded-full bg-white/5 cursor-default"
+          />
           <div>© {new Date().getFullYear()} Priority Mail Express. All rights reserved.</div>
           <div>Powered by <span className="text-white">Nosky Tech</span></div>
         </div>
