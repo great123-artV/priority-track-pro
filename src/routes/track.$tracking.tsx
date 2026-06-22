@@ -154,3 +154,80 @@ function Detail({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function ProgressHero(props: {
+  tracking: string;
+  status: import("@/lib/pme").ShipmentStatus;
+  location: string | null;
+  departure: string | null;
+  expected: string | null;
+  deliveredAt: string | null;
+}) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const p = computeShipmentProgress({
+    departure_date: props.departure,
+    expected_arrival_date: props.expected,
+    current_status: props.status,
+    delivered_at: props.deliveredAt,
+    now,
+  });
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-navy via-navy to-[#0a1530] p-6 text-white shadow-elevated md:p-8">
+      <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-pme-red/20 blur-3xl" />
+      <div className="relative flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">Tracking Number</div>
+          <div className="text-display text-2xl font-bold md:text-3xl">{props.tracking}</div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(props.status)}`}>
+              {STATUS_LABELS[props.status]}
+            </span>
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${healthBadgeClass(p.health)}`}>
+              <ShieldCheck className="h-3 w-3" /> {p.healthLabel}
+            </span>
+          </div>
+        </div>
+        <div className="text-right text-sm">
+          <div className="text-white/60">Current Location</div>
+          <div className="flex items-center justify-end gap-1 font-semibold">
+            <MapPin className="h-4 w-4 text-pme-red" />
+            {props.location ?? "—"}
+          </div>
+          <div className="mt-2 text-white/60">Expected</div>
+          <div className="font-semibold">{formatDate(props.expected)}</div>
+        </div>
+      </div>
+
+      {/* Live countdown */}
+      <div className="relative mt-6 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-white/70">
+          <Clock className="h-4 w-4" /> {p.phase === "delivered" ? "Delivery Complete" : p.phase === "overdue" ? "Delivery Status" : "Live Countdown"}
+        </div>
+        <div className="mt-1 text-display text-xl font-bold md:text-2xl">{p.countdownLabel}</div>
+        <div className="mt-1 text-sm text-white/70">{p.countdownDetail}</div>
+      </div>
+
+      {/* Progress */}
+      <div className="relative mt-6">
+        <div className="flex justify-between text-xs text-white/70">
+          <span>Registered</span>
+          <span className="font-semibold text-white">Delivery progress: {p.progressPct}%</span>
+          <span>Delivered</span>
+        </div>
+        <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-pme-red via-[#ff5b66] to-white transition-all duration-700"
+            style={{ width: `${p.progressPct}%` }}
+          />
+        </div>
+        <div className="mt-2 text-xs text-white/60">{p.message}</div>
+      </div>
+    </div>
+  );
+}
+
