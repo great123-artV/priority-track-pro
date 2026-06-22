@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 import { STATUS_FLOW, STATUS_LABELS, statusBadgeClass, formatDateTime, formatMoney, PAYMENT_LABELS } from "@/lib/pme";
 import type { ShipmentStatus } from "@/lib/pme";
-import { Receipt as ReceiptIcon, MapPin, Loader2, CheckCircle2 } from "lucide-react";
+import { Receipt as ReceiptIcon, MapPin, Loader2, CheckCircle2, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/shipments/$id")({
@@ -42,6 +42,25 @@ function ShipmentDetail() {
   const [recv, setRecv] = useState("");
   const [delivNote, setDelivNote] = useState("");
   const [delivBusy, setDelivBusy] = useState(false);
+
+  // System Override States
+  const [overrideStatus, setOverrideStatus] = useState<ShipmentStatus>("shipment_registered");
+  const [overrideCreated, setOverrideCreated] = useState("");
+  const [overrideDeparture, setOverrideDeparture] = useState("");
+  const [overrideUpdated, setOverrideUpdated] = useState("");
+  const [overrideExpected, setOverrideExpected] = useState("");
+  const [overrideBusy, setOverrideBusy] = useState(false);
+
+  // Sync override states when data is loaded
+  useEffect(() => {
+    if (data?.shipment) {
+      setOverrideStatus(data.shipment.current_status);
+      setOverrideCreated(new Date(data.shipment.created_at).toISOString().slice(0, 16));
+      setOverrideDeparture(data.shipment.departure_date ? new Date(data.shipment.departure_date).toISOString().slice(0, 16) : "");
+      setOverrideUpdated(new Date(data.shipment.updated_at).toISOString().slice(0, 16));
+      setOverrideExpected(data.shipment.expected_arrival_date ? new Date(data.shipment.expected_arrival_date).toISOString().slice(0, 16) : "");
+    }
+  }, [data]);
 
   const addEvent = async () => {
     if (!data) return;
@@ -82,6 +101,31 @@ function ShipmentDetail() {
       qc.invalidateQueries({ queryKey: ["shipment", id] });
     } catch (e) { toast.error((e as Error).message); }
     finally { setDelivBusy(false); }
+  };
+
+  const applyOverrides = async () => {
+    if (!data) return;
+    setOverrideBusy(true);
+    try {
+      const { error } = await supabase
+        .from("shipments")
+        .update({
+          current_status: overrideStatus,
+          created_at: new Date(overrideCreated).toISOString(),
+          departure_date: overrideDeparture ? new Date(overrideDeparture).toISOString() : null,
+          updated_at: new Date(overrideUpdated).toISOString(),
+          expected_arrival_date: overrideExpected ? new Date(overrideExpected).toISOString() : null,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("System overrides applied successfully");
+      qc.invalidateQueries({ queryKey: ["shipment", id] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setOverrideBusy(false);
+    }
   };
 
   if (!data) return <div className="container mx-auto px-6 py-8 text-muted-foreground">Loading…</div>;
@@ -127,6 +171,75 @@ function ShipmentDetail() {
 
           {/* Timeline */}
           <TrackingTimeline events={data.events} currentStatus={s.current_status} />
+
+          {/* System Overrides */}
+          <section className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 shadow-sm">
+            <h2 className="mb-4 flex items-center gap-2 text-display text-lg font-semibold text-destructive">
+              <Settings2 className="h-4 w-4" /> System Overrides
+            </h2>
+            <p className="mb-4 text-xs text-muted-foreground">
+              Directly manipulate core shipment properties. Changes here skip the timeline and are intended for correction or specific logistics adjustments.
+            </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Current Status</Label>
+                <Select value={overrideStatus} onValueChange={(v) => setOverrideStatus(v as ShipmentStatus)}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(STATUS_LABELS).map(([val, label]) => (
+                      <SelectItem key={val} value={val}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Registration Date (Created At)</Label>
+                <Input
+                  type="datetime-local"
+                  value={overrideCreated}
+                  onChange={(e) => setOverrideCreated(e.target.value)}
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Departure Date (Journey Start)</Label>
+                <Input
+                  type="datetime-local"
+                  value={overrideDeparture}
+                  onChange={(e) => setOverrideDeparture(e.target.value)}
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Last Update (Updated At)</Label>
+                <Input
+                  type="datetime-local"
+                  value={overrideUpdated}
+                  onChange={(e) => setOverrideUpdated(e.target.value)}
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Expected Delivery</Label>
+                <Input
+                  type="datetime-local"
+                  value={overrideExpected}
+                  onChange={(e) => setOverrideExpected(e.target.value)}
+                  className="bg-background"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                variant="destructive"
+                onClick={applyOverrides}
+                disabled={overrideBusy}
+              >
+                {overrideBusy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Save System Overrides
+              </Button>
+            </div>
+          </section>
         </div>
 
         {/* Sidebar */}
