@@ -1,9 +1,8 @@
-import logoAsset from "@/assets/pme-logo.jpeg.asset.json";
 
 export function Logo({ className = "h-10 w-auto" }: { className?: string }) {
   return (
     <img
-      src={logoAsset.url}
+      src="/pme-logo.png"
       alt="Priority Mail Express — International Special Delivery"
       className={className}
       draggable={false}
