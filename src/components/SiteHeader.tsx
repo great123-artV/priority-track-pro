@@ -18,9 +18,6 @@ export function SiteHeader() {
           <Button asChild variant="outline" size="sm" className="hidden border-border/70 bg-white/60 backdrop-blur sm:inline-flex">
             <Link to="/track">Track</Link>
           </Button>
-          <Button asChild size="sm" className="bg-gradient-brand text-white shadow-card hover:opacity-95">
-            <Link to="/auth">Staff Login</Link>
-          </Button>
         </div>
       </div>
     </header>
