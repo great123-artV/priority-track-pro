@@ -15,6 +15,88 @@ export const Route = createFileRoute("/receipt/$id")({
   component: ReceiptPage,
 });
 
+const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
+  scale: 2,
+  backgroundColor: "#ffffff",
+  useCORS: true,
+  logging: false,
+  width: sourceRef.current?.scrollWidth,
+  height: sourceRef.current?.scrollHeight,
+  windowWidth: sourceRef.current?.scrollWidth,
+  windowHeight: sourceRef.current?.scrollHeight,
+  onclone: (clonedDoc: Document) => {
+    const el = clonedDoc.querySelector(".print-area") as HTMLElement;
+    if (el) {
+      el.style.transform = "none";
+      el.style.boxShadow = "none";
+      el.style.border = "none";
+      el.style.margin = "0";
+      el.style.padding = "0";
+      el.style.width = `${sourceRef.current?.scrollWidth}px`;
+    }
+
+    // Force HEX colors on root (html2canvas doesn't support oklch)
+    const root = clonedDoc.documentElement;
+    root.style.setProperty("--pme-red", "#E21D12");
+    root.style.setProperty("--pme-blue", "#1E40AF");
+    root.style.setProperty("--navy", "#0B1E3F");
+    root.style.setProperty("--navy-deep", "#081226");
+    root.style.setProperty("--foreground", "#1A2B4B");
+    root.style.setProperty("--background", "#ffffff");
+    root.style.setProperty("--surface", "#f8fafc");
+    root.style.setProperty("--border", "#cbd5e1");
+    root.style.setProperty("--card", "#ffffff");
+    root.style.setProperty("--muted", "#f1f5f9");
+    root.style.setProperty("--accent", "#f1f5f9");
+
+    const style = clonedDoc.createElement("style");
+    style.innerHTML = `
+      .text-pme-red { color: #E21D12 !important; }
+      .text-navy { color: #0B1E3F !important; }
+      .bg-navy { background-color: #0B1E3F !important; }
+      .bg-pme-red { background-color: #E21D12 !important; }
+      .text-slate-600 { color: #475569 !important; }
+      .text-slate-700 { color: #334155 !important; }
+      .text-slate-400 { color: #94a3b8 !important; }
+      .bg-slate-50 { background-color: #f8fafc !important; }
+      .bg-slate-200 { background-color: #e2e8f0 !important; }
+      .border-slate-300 { border-color: #cbd5e1 !important; }
+    `;
+    clonedDoc.head.appendChild(style);
+
+    // Remove oklch rules from existing stylesheets to prevent crash
+    try {
+      for (const sheet of Array.from(clonedDoc.styleSheets)) {
+        try {
+          const s = sheet as CSSStyleSheet;
+          for (let i = s.cssRules.length - 1; i >= 0; i--) {
+            if (s.cssRules[i].cssText.includes("oklch")) {
+              s.deleteRule(i);
+            }
+          }
+        } catch (e) { /* ignore cross-origin */ }
+      }
+    } catch (e) { /* ignore */ }
+
+    // Clean up potentially problematic SVGs (like icons) while keeping canvases (QR/Barcode)
+    clonedDoc.querySelectorAll("svg").forEach((svg) => {
+      // Most SVGs in this app use oklch which crashes html2canvas.
+      // We'll replace them with HEX or remove them if they are just icons.
+      const isLarge = svg.getBoundingClientRect().width > 100;
+      if (!isLarge || svg.parentElement?.classList.contains("no-print")) {
+        svg.remove();
+      } else {
+        svg.setAttribute("fill", "#0B1E3F");
+        svg.setAttribute("stroke", "#0B1E3F");
+        svg.querySelectorAll("*").forEach(child => {
+          if (child.getAttribute("fill")?.includes("oklch")) child.setAttribute("fill", "#0B1E3F");
+          if (child.getAttribute("stroke")?.includes("oklch")) child.setAttribute("stroke", "#0B1E3F");
+        });
+      }
+    });
+  },
+});
+
 function ReceiptPage() {
   const { id } = Route.useParams();
   const queryClient = useQueryClient();
@@ -30,16 +112,15 @@ function ReceiptPage() {
       const { data: s } = await supabase
         .from("shipments")
         .select("*, origin:branches!shipments_origin_branch_id_fkey(name,city,country,address,phone)")
-        .eq("id", id).maybeSingle();
+        .eq("id", id)
+        .maybeSingle();
       return s;
     },
   });
 
   useEffect(() => {
     if (data?.expected_arrival_date) {
-      // Use a fixed date to parse the expected_arrival_date which might only be a date string
       const date = new Date(data.expected_arrival_date);
-      // If it's a date-only string like "2026-06-25", it defaults to 00:00 UTC
       setNewTime(date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }));
     }
   }, [data?.expected_arrival_date]);
@@ -48,37 +129,17 @@ function ReceiptPage() {
     if (!ref.current) return;
     setDownloading(true);
     try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const html2canvas = (await import("html2canvas")).default;
       const { default: jsPDF } = await import("jspdf");
-      const canvas = await html2canvas(ref.current, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        logging: false,
-        width: ref.current.scrollWidth,
-        height: ref.current.scrollHeight,
-        windowWidth: ref.current.scrollWidth,
-        windowHeight: ref.current.scrollHeight,
-        onclone: (clonedDoc) => {
-          const el = clonedDoc.querySelector(".print-area") as HTMLElement;
-          if (el) {
-            el.style.transform = "none";
-            el.style.boxShadow = "none";
-            el.style.border = "none";
-            el.style.margin = "0";
-            el.style.padding = "0";
-            el.style.width = `${ref.current?.scrollWidth}px`;
-          }
-        }
-      });
+
+      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
       const img = canvas.toDataURL("image/png");
 
-      // Calculate dimensions to fit or custom size
       const imgProps = { width: canvas.width, height: canvas.height };
-      const pdfWidth = 210; // A4 width in mm
+      const pdfWidth = 210;
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      // Create PDF with custom height to ensure "one paper" (no page breaks)
       const pdf = new jsPDF({
         orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
         unit: "mm",
@@ -98,28 +159,9 @@ function ReceiptPage() {
     if (!ref.current) return;
     setDownloading(true);
     try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(ref.current, {
-        scale: 3,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        logging: false,
-        width: ref.current.scrollWidth,
-        height: ref.current.scrollHeight,
-        windowWidth: ref.current.scrollWidth,
-        windowHeight: ref.current.scrollHeight,
-        onclone: (clonedDoc) => {
-          const el = clonedDoc.querySelector(".print-area") as HTMLElement;
-          if (el) {
-            el.style.transform = "none";
-            el.style.boxShadow = "none";
-            el.style.border = "none";
-            el.style.margin = "0";
-            el.style.padding = "0";
-            el.style.width = `${ref.current?.scrollWidth}px`;
-          }
-        }
-      });
+      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
       const link = document.createElement("a");
       link.download = `${data?.receipt_number ?? "PME-receipt"}.png`;
       link.href = canvas.toDataURL("image/png");
@@ -134,8 +176,9 @@ function ReceiptPage() {
   const shareReceipt = async () => {
     if (!ref.current) return;
     try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(ref.current, { scale: 2, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
 
       canvas.toBlob(async (blob) => {
         if (!blob) return;
@@ -148,7 +191,6 @@ function ReceiptPage() {
             text: `Receipt for shipment ${data?.tracking_number}`,
           });
         } else {
-          // Fallback to sharing URL if file share not supported
           if (navigator.share) {
             await navigator.share({
               title: `PME Receipt ${data?.receipt_number}`,
@@ -170,7 +212,6 @@ function ReceiptPage() {
     if (!data || !newTime) return;
     setIsSaving(true);
     try {
-      // Parse the time string (e.g., "10:30 AM")
       const timeMatch = newTime.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
       if (!timeMatch) {
         toast.error("Invalid time format. Please use HH:MM AM/PM");
@@ -187,14 +228,8 @@ function ReceiptPage() {
         if (ampm.toUpperCase() === "AM" && h === 12) h = 0;
       }
 
-      // Robust date-time merging: Extract date portion from existing string (YYYY-MM-DD)
-      // and combine with new time to avoid timezone calendar shifts.
       const datePart = (data.expected_arrival_date || new Date().toISOString()).split("T")[0];
       const timePart = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
-
-      // We assume the DB is storing in UTC or has a fixed offset.
-      // This format (YYYY-MM-DDTHH:mm:ss) is generally interpreted as local by browser
-      // but Supabase expects ISO. Let's create a proper ISO string.
       const isoDate = `${datePart}T${timePart}Z`;
 
       const { error } = await supabase
@@ -249,7 +284,6 @@ function ReceiptPage() {
           <div className="relative grid grid-cols-12 items-center gap-3 border-b border-slate-300 px-8 pt-6 pb-4">
             <div className="col-span-3">
               <div className="h-20 w-full overflow-hidden rounded-md bg-slate-200/60 ring-1 ring-slate-300/70">
-                {/* decorative aircraft strip; logo on right preserves brand */}
                 <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-navy/80 via-navy to-pme-red text-[10px] font-semibold uppercase tracking-[0.25em] text-white">
                   PME Cargo
                 </div>
