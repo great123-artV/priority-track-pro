@@ -15,6 +15,8 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VerifyIndexRouteImport } from './routes/verify.index'
+import { Route as TrackIndexRouteImport } from './routes/track.index'
 import { Route as VerifyReceiptRouteImport } from './routes/verify.$receipt'
 import { Route as TrackTrackingRouteImport } from './routes/track.$tracking'
 import { Route as ReceiptIdRouteImport } from './routes/receipt.$id'
@@ -56,6 +58,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyIndexRoute = VerifyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VerifyRoute,
+} as any)
+const TrackIndexRoute = TrackIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TrackRoute,
 } as any)
 const VerifyReceiptRoute = VerifyReceiptRouteImport.update({
   id: '/$receipt',
@@ -136,6 +148,8 @@ export interface FileRoutesByFullPath {
   '/receipt/$id': typeof ReceiptIdRoute
   '/track/$tracking': typeof TrackTrackingRoute
   '/verify/$receipt': typeof VerifyReceiptRoute
+  '/track/': typeof TrackIndexRoute
+  '/verify/': typeof VerifyIndexRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/shipments/new': typeof AuthenticatedShipmentsNewRoute
   '/shipments/': typeof AuthenticatedShipmentsIndexRoute
@@ -144,8 +158,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/track': typeof TrackRouteWithChildren
-  '/verify': typeof VerifyRouteWithChildren
   '/branches': typeof AuthenticatedBranchesRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -155,6 +167,8 @@ export interface FileRoutesByTo {
   '/receipt/$id': typeof ReceiptIdRoute
   '/track/$tracking': typeof TrackTrackingRoute
   '/verify/$receipt': typeof VerifyReceiptRoute
+  '/track': typeof TrackIndexRoute
+  '/verify': typeof VerifyIndexRoute
   '/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/shipments/new': typeof AuthenticatedShipmentsNewRoute
   '/shipments': typeof AuthenticatedShipmentsIndexRoute
@@ -176,6 +190,8 @@ export interface FileRoutesById {
   '/receipt/$id': typeof ReceiptIdRoute
   '/track/$tracking': typeof TrackTrackingRoute
   '/verify/$receipt': typeof VerifyReceiptRoute
+  '/track/': typeof TrackIndexRoute
+  '/verify/': typeof VerifyIndexRoute
   '/_authenticated/shipments/$id': typeof AuthenticatedShipmentsIdRoute
   '/_authenticated/shipments/new': typeof AuthenticatedShipmentsNewRoute
   '/_authenticated/shipments/': typeof AuthenticatedShipmentsIndexRoute
@@ -197,6 +213,8 @@ export interface FileRouteTypes {
     | '/receipt/$id'
     | '/track/$tracking'
     | '/verify/$receipt'
+    | '/track/'
+    | '/verify/'
     | '/shipments/$id'
     | '/shipments/new'
     | '/shipments/'
@@ -205,8 +223,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/sitemap.xml'
-    | '/track'
-    | '/verify'
     | '/branches'
     | '/customers'
     | '/dashboard'
@@ -216,6 +232,8 @@ export interface FileRouteTypes {
     | '/receipt/$id'
     | '/track/$tracking'
     | '/verify/$receipt'
+    | '/track'
+    | '/verify'
     | '/shipments/$id'
     | '/shipments/new'
     | '/shipments'
@@ -236,6 +254,8 @@ export interface FileRouteTypes {
     | '/receipt/$id'
     | '/track/$tracking'
     | '/verify/$receipt'
+    | '/track/'
+    | '/verify/'
     | '/_authenticated/shipments/$id'
     | '/_authenticated/shipments/new'
     | '/_authenticated/shipments/'
@@ -294,6 +314,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/verify/': {
+      id: '/verify/'
+      path: '/'
+      fullPath: '/verify/'
+      preLoaderRoute: typeof VerifyIndexRouteImport
+      parentRoute: typeof VerifyRoute
+    }
+    '/track/': {
+      id: '/track/'
+      path: '/'
+      fullPath: '/track/'
+      preLoaderRoute: typeof TrackIndexRouteImport
+      parentRoute: typeof TrackRoute
     }
     '/verify/$receipt': {
       id: '/verify/$receipt'
@@ -411,20 +445,24 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface TrackRouteChildren {
   TrackTrackingRoute: typeof TrackTrackingRoute
+  TrackIndexRoute: typeof TrackIndexRoute
 }
 
 const TrackRouteChildren: TrackRouteChildren = {
   TrackTrackingRoute: TrackTrackingRoute,
+  TrackIndexRoute: TrackIndexRoute,
 }
 
 const TrackRouteWithChildren = TrackRoute._addFileChildren(TrackRouteChildren)
 
 interface VerifyRouteChildren {
   VerifyReceiptRoute: typeof VerifyReceiptRoute
+  VerifyIndexRoute: typeof VerifyIndexRoute
 }
 
 const VerifyRouteChildren: VerifyRouteChildren = {
   VerifyReceiptRoute: VerifyReceiptRoute,
+  VerifyIndexRoute: VerifyIndexRoute,
 }
 
 const VerifyRouteWithChildren =
