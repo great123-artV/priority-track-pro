@@ -6,6 +6,7 @@ export function Logo({ className = "h-10 w-auto" }: { className?: string }) {
       alt="Priority Mail Express — International Special Delivery"
       className={className}
       draggable={false}
+      crossOrigin="anonymous"
     />
   );
 }

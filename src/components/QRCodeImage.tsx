@@ -2,18 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 
 export function QRCodeImage({ value, size = 180, className }: { value: string; size?: number; className?: string }) {
-  const [src, setSrc] = useState<string>("");
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    QRCode.toDataURL(value, { width: size, margin: 1, errorCorrectionLevel: "M" })
-      .then(setSrc)
-      .catch(() => setSrc(""));
+    if (!ref.current) return;
+    QRCode.toCanvas(ref.current, value, { width: size, margin: 1, errorCorrectionLevel: "M" })
+      .catch((err) => console.error("QR Error", err));
   }, [value, size]);
-  if (!src) return <div className={className} style={{ width: size, height: size, background: "#f1f1f1" }} />;
-  return <img src={src} alt="QR Code" width={size} height={size} className={className} />;
+  return <canvas ref={ref} style={{ width: size, height: size }} className={className} />;
 }
 
 export function BarcodeImage({ value, className }: { value: string; className?: string }) {
-  const ref = useRef<SVGSVGElement>(null);
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     if (!ref.current) return;
     import("jsbarcode").then((m) => {
@@ -29,5 +28,5 @@ export function BarcodeImage({ value, className }: { value: string; className?: 
       } catch { /* ignore */ }
     });
   }, [value]);
-  return <svg ref={ref} className={className} />;
+  return <canvas ref={ref} className={className} />;
 }
