@@ -52,12 +52,145 @@ export function statusBadgeClass(status: ShipmentStatus): string {
   return "bg-navy/10 text-navy border-navy/20";
 }
 
+export const STATUS_PROGRESS_MAP: Record<ShipmentStatus, number> = {
+  shipment_registered: 5,
+  received_at_origin: 10,
+  processing_sorting: 20,
+  dispatched_origin: 35,
+  in_transit: 50,
+  arrived_destination: 70,
+  out_for_delivery: 90,
+  delivered: 100,
+  delayed: 0,
+  cancelled: 0,
+};
+
 export function statusProgress(status: ShipmentStatus): number {
-  const idx = STATUS_FLOW.indexOf(status);
-  if (status === "delivered") return 100;
-  if (status === "cancelled") return 0;
-  if (idx < 0) return 10;
-  return Math.round(((idx + 1) / STATUS_FLOW.length) * 100);
+  return STATUS_PROGRESS_MAP[status] ?? 5;
+}
+
+export type DeliveryHealth = "scheduled" | "on_schedule" | "almost_due" | "delayed" | "delivered" | "cancelled";
+
+export interface ShipmentProgress {
+  health: DeliveryHealth;
+  healthLabel: string;
+  progressPct: number;
+  timeProgressPct: number;
+  statusProgressPct: number;
+  countdownLabel: string;
+  countdownDetail: string;
+  message: string;
+  totalMs: number;
+  elapsedMs: number;
+  remainingMs: number;
+  phase: "pre_departure" | "in_window" | "overdue" | "delivered" | "cancelled";
+}
+
+export function formatCountdown(ms: number, withSeconds = true) {
+  const abs = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(abs / 86400);
+  const hours = Math.floor((abs % 86400) / 3600);
+  const minutes = Math.floor((abs % 3600) / 60);
+  const seconds = abs % 60;
+  const parts = [
+    `${days} day${days === 1 ? "" : "s"}`,
+    `${hours} hr${hours === 1 ? "" : "s"}`,
+    `${minutes} min${minutes === 1 ? "" : "s"}`,
+  ];
+  if (withSeconds) parts.push(`${seconds} sec${seconds === 1 ? "" : "s"}`);
+  return parts.join(", ");
+}
+
+export const STATUS_MESSAGES: Partial<Record<ShipmentStatus, string>> = {
+  shipment_registered: "Your shipment has been registered successfully and is awaiting movement.",
+  received_at_origin: "Your shipment has been received at our origin branch and is being prepared.",
+  processing_sorting: "Your shipment is being processed at our sorting center.",
+  dispatched_origin: "Your shipment has been dispatched from the origin hub.",
+  in_transit: "Your shipment is currently moving through our logistics network.",
+  arrived_destination: "Your shipment has arrived near the destination and is being prepared for delivery.",
+  out_for_delivery: "Your shipment is with a delivery officer and will be delivered soon.",
+  delivered: "Your shipment has been delivered successfully.",
+  delayed: "Your shipment requires attention. Please contact Priority Mail Express support for an update.",
+  cancelled: "This shipment has been cancelled.",
+};
+
+export function computeShipmentProgress(args: {
+  departure_date: string | null;
+  expected_arrival_date: string | null;
+  current_status: ShipmentStatus;
+  delivered_at?: string | null;
+  now?: Date;
+}): ShipmentProgress {
+  const now = args.now ?? new Date();
+  const dep = args.departure_date ? new Date(args.departure_date) : null;
+  const exp = args.expected_arrival_date ? new Date(args.expected_arrival_date) : null;
+  const totalMs = dep && exp ? Math.max(1, exp.getTime() - dep.getTime()) : 0;
+  const elapsedMs = dep ? Math.max(0, now.getTime() - dep.getTime()) : 0;
+  const remainingMs = exp ? exp.getTime() - now.getTime() : 0;
+  const timeProgressPct = totalMs > 0 ? Math.min(100, (elapsedMs / totalMs) * 100) : 0;
+  const statusProgressPct = statusProgress(args.current_status);
+
+  let phase: ShipmentProgress["phase"] = "in_window";
+  if (args.current_status === "cancelled") phase = "cancelled";
+  else if (args.current_status === "delivered") phase = "delivered";
+  else if (dep && now < dep) phase = "pre_departure";
+  else if (exp && now > exp) phase = "overdue";
+
+  let health: DeliveryHealth = "on_schedule";
+  let healthLabel = "On Schedule";
+  if (phase === "cancelled") { health = "cancelled"; healthLabel = "Cancelled"; }
+  else if (phase === "delivered") { health = "delivered"; healthLabel = "Delivered"; }
+  else if (phase === "overdue" || args.current_status === "delayed") { health = "delayed"; healthLabel = "Delayed"; }
+  else if (phase === "pre_departure") { health = "scheduled"; healthLabel = "Scheduled"; }
+  else if (remainingMs > 0 && remainingMs < 24 * 3600 * 1000) { health = "almost_due"; healthLabel = "Almost Due"; }
+
+  let combined = Math.max(timeProgressPct, statusProgressPct);
+  if (args.current_status !== "delivered") combined = Math.min(combined, 95);
+  if (phase === "delivered") combined = 100;
+  if (phase === "cancelled") combined = 0;
+
+  let countdownLabel = "";
+  let countdownDetail = "";
+  if (phase === "delivered") {
+    countdownLabel = "Delivered successfully";
+    countdownDetail = args.delivered_at ? `Delivered on ${formatDateTime(args.delivered_at)}` : "Delivery complete.";
+  } else if (phase === "cancelled") {
+    countdownLabel = "Shipment cancelled";
+    countdownDetail = "This shipment is no longer active.";
+  } else if (phase === "pre_departure" && dep) {
+    countdownLabel = `Departure in ${formatCountdown(dep.getTime() - now.getTime(), false)}`;
+    countdownDetail = "Shipment registered. Awaiting departure from origin.";
+  } else if (phase === "in_window") {
+    countdownLabel = `Estimated delivery in ${formatCountdown(Math.max(0, remainingMs))}`;
+    countdownDetail = "Your shipment is moving within the expected delivery timeframe.";
+  } else if (phase === "overdue") {
+    countdownLabel = `Overdue by ${formatCountdown(Math.abs(remainingMs), false)}`;
+    countdownDetail = "Delivery requires attention. Shipment has exceeded the expected delivery timeframe.";
+  }
+
+  const message = STATUS_MESSAGES[args.current_status] ?? countdownDetail;
+
+  return {
+    health, healthLabel,
+    progressPct: Math.round(combined),
+    timeProgressPct: Math.round(timeProgressPct),
+    statusProgressPct,
+    countdownLabel, countdownDetail,
+    message,
+    totalMs, elapsedMs, remainingMs,
+    phase,
+  };
+}
+
+export function healthBadgeClass(h: DeliveryHealth): string {
+  switch (h) {
+    case "delivered": return "bg-success/10 text-success border-success/30";
+    case "on_schedule": return "bg-info/10 text-info border-info/30";
+    case "scheduled": return "bg-navy/10 text-navy border-navy/30";
+    case "almost_due": return "bg-warning/15 text-warning-foreground border-warning/40";
+    case "delayed": return "bg-destructive/10 text-destructive border-destructive/30";
+    case "cancelled": return "bg-muted text-muted-foreground border-border";
+  }
 }
 
 export function formatMoney(n: number | null | undefined, currency = "USD") {
