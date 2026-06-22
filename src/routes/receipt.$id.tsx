@@ -20,10 +20,8 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
   backgroundColor: "#ffffff",
   useCORS: true,
   logging: false,
-  width: sourceRef.current?.scrollWidth,
-  height: sourceRef.current?.scrollHeight,
-  windowWidth: sourceRef.current?.scrollWidth,
-  windowHeight: sourceRef.current?.scrollHeight,
+  width: 800,
+  windowWidth: 800,
   onclone: (clonedDoc: Document) => {
     const el = clonedDoc.querySelector(".print-area") as HTMLElement;
     if (el) {
@@ -32,7 +30,7 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
       el.style.border = "none";
       el.style.margin = "0";
       el.style.padding = "0";
-      el.style.width = `${sourceRef.current?.scrollWidth}px`;
+      el.style.width = "800px";
     }
 
     // Force HEX colors on root (html2canvas doesn't support oklch)
@@ -64,14 +62,20 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
     `;
     clonedDoc.head.appendChild(style);
 
-    // Remove oklch rules from existing stylesheets to prevent crash
+    // Remove oklch properties from existing rules to prevent crash while preserving layout
     try {
       for (const sheet of Array.from(clonedDoc.styleSheets)) {
         try {
           const s = sheet as CSSStyleSheet;
-          for (let i = s.cssRules.length - 1; i >= 0; i--) {
-            if (s.cssRules[i].cssText.includes("oklch")) {
-              s.deleteRule(i);
+          for (let i = 0; i < s.cssRules.length; i++) {
+            const rule = s.cssRules[i];
+            if (rule instanceof CSSStyleRule && rule.cssText.includes("oklch")) {
+              for (let j = rule.style.length - 1; j >= 0; j--) {
+                const prop = rule.style[j];
+                if (rule.style.getPropertyValue(prop).includes("oklch")) {
+                  rule.style.removeProperty(prop);
+                }
+              }
             }
           }
         } catch (e) { /* ignore cross-origin */ }
