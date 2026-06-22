@@ -1,13 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 import {
-  STATUS_LABELS, statusBadgeClass, statusProgress, formatDate, formatDateTime,
+  STATUS_LABELS, statusBadgeClass, formatDate, formatDateTime,
+  computeShipmentProgress, healthBadgeClass,
 } from "@/lib/pme";
-import { AlertTriangle, MapPin, Package, Truck, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, MapPin, Package, Truck, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/track/$tracking")({
