@@ -142,19 +142,6 @@ function Landing() {
           </div>
         </section>
 
-        {/* CTA strip */}
-        <section className="bg-navy text-navy-foreground">
-          <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-4 py-14 md:flex-row">
-            <div>
-              <h3 className="text-display text-2xl font-bold md:text-3xl">Ship with Priority Mail Express today</h3>
-              <p className="mt-1 text-white/70">Staff sign-in to create shipments, generate QR receipts, and update movement.</p>
-            </div>
-            <Button asChild size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-              <Link to="/auth">Staff Login <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-          </div>
-        </section>
-
         <SiteFooter />
       </div>
     </>
