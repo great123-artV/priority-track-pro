@@ -35,11 +35,17 @@ function Landing() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
 
-  const onTrack = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = (type: "track" | "verify") => {
     const trimmed = code.trim();
-    if (!trimmed) return;
-    navigate({ to: "/track/$tracking", params: { tracking: trimmed } });
+    if (!trimmed) {
+      navigate({ to: type === "track" ? "/track" : "/verify" });
+      return;
+    }
+    if (type === "track") {
+      navigate({ to: "/track/$tracking", params: { tracking: trimmed } });
+    } else {
+      navigate({ to: "/verify/$receipt", params: { receipt: trimmed } });
+    }
   };
 
   return (
@@ -80,7 +86,13 @@ function Landing() {
                 <h2 className="text-display text-xl font-semibold">Track Your Shipment</h2>
               </div>
               <p className="mb-5 text-sm text-white/70">Enter your tracking number to see live shipment movement.</p>
-              <form onSubmit={onTrack} className="space-y-3">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSearch("track");
+                }}
+                className="space-y-3"
+              >
                 <Input
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
@@ -91,8 +103,14 @@ function Landing() {
                   <Button type="submit" size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
                     Track Shipment
                   </Button>
-                  <Button asChild type="button" size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10">
-                    <Link to="/verify"><BadgeCheck className="mr-2 h-4 w-4" /> Verify Receipt</Link>
+                  <Button
+                    type="button"
+                    onClick={() => handleSearch("verify")}
+                    size="lg"
+                    variant="outline"
+                    className="border-white/30 bg-transparent text-white hover:bg-white/10"
+                  >
+                    <BadgeCheck className="mr-2 h-4 w-4" /> Verify Receipt
                   </Button>
                 </div>
               </form>
