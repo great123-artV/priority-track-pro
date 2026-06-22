@@ -16,39 +16,92 @@ export const Route = createFileRoute("/receipt/$id")({
 });
 
 const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
-  scale: 2,
+  scale: 2.5, // Increased scale for better clarity on mobile sharing
   backgroundColor: "#ffffff",
   useCORS: true,
+  allowTaint: true,
   logging: false,
   width: 800,
   windowWidth: 800,
   onclone: (clonedDoc: Document) => {
     const el = clonedDoc.querySelector(".print-area") as HTMLElement;
     if (el) {
+      // Reset transformations and ensure layout is stable for capture
       el.style.transform = "none";
       el.style.boxShadow = "none";
       el.style.border = "none";
       el.style.margin = "0";
       el.style.padding = "0";
       el.style.width = "800px";
+      el.style.height = "auto";
+      el.style.minHeight = "auto";
+      el.style.position = "relative";
+      el.style.left = "0";
+      el.style.top = "0";
+
+      // Fix potential grid issues that cause logo or elements to jump/resize
+      // We force the header to use flexbox for the capture to ensure stability
+      const header = el.firstElementChild as HTMLElement;
+      if (header && header.classList.contains('grid')) {
+        header.style.display = "flex";
+        header.style.flexDirection = "row";
+        header.style.alignItems = "center";
+        header.style.justifyContent = "space-between";
+        header.style.paddingLeft = "32px";
+        header.style.paddingRight = "32px";
+
+        // Fix logo container and image size
+        const logoContainer = header.lastElementChild as HTMLElement;
+        if (logoContainer) {
+          logoContainer.style.width = "120px";
+          logoContainer.style.flexShrink = "0";
+          logoContainer.style.display = "flex";
+          logoContainer.style.justifyContent = "flex-end";
+          const logoImg = logoContainer.querySelector("img") as HTMLElement;
+          if (logoImg) {
+            logoImg.style.height = "70px";
+            logoImg.style.width = "auto";
+            logoImg.style.maxWidth = "none";
+            logoImg.style.objectFit = "contain";
+          }
+        }
+      }
     }
 
-    // Force HEX colors on root (html2canvas doesn't support oklch)
+    // Force HEX colors on root and body (html2canvas doesn't support oklch)
     const root = clonedDoc.documentElement;
-    root.style.setProperty("--pme-red", "#E21D12");
-    root.style.setProperty("--pme-blue", "#1E40AF");
-    root.style.setProperty("--navy", "#0B1E3F");
-    root.style.setProperty("--navy-deep", "#081226");
-    root.style.setProperty("--foreground", "#1A2B4B");
-    root.style.setProperty("--background", "#ffffff");
-    root.style.setProperty("--surface", "#f8fafc");
-    root.style.setProperty("--border", "#cbd5e1");
-    root.style.setProperty("--card", "#ffffff");
-    root.style.setProperty("--muted", "#f1f5f9");
-    root.style.setProperty("--accent", "#f1f5f9");
+    const colors = {
+      "--pme-red": "#E21D12",
+      "--pme-blue": "#1E40AF",
+      "--navy": "#0B1E3F",
+      "--navy-deep": "#081226",
+      "--foreground": "#1A2B4B",
+      "--background": "#ffffff",
+      "--surface": "#f8fafc",
+      "--border": "#cbd5e1",
+      "--card": "#ffffff",
+      "--muted": "#f1f5f9",
+      "--accent": "#f1f5f9",
+      "--slate-50": "#f8fafc",
+      "--slate-100": "#f1f5f9",
+      "--slate-200": "#e2e8f0",
+      "--slate-300": "#cbd5e1",
+      "--slate-400": "#94a3b8",
+      "--slate-500": "#64748b",
+      "--slate-600": "#475569",
+      "--slate-700": "#334155",
+      "--slate-800": "#1e293b",
+      "--slate-900": "#0f172a",
+    };
+
+    Object.entries(colors).forEach(([key, val]) => {
+      root.style.setProperty(key, val);
+      clonedDoc.body.style.setProperty(key, val);
+    });
 
     const style = clonedDoc.createElement("style");
     style.innerHTML = `
+      * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
       .text-pme-red { color: #E21D12 !important; }
       .text-navy { color: #0B1E3F !important; }
       .bg-navy { background-color: #0B1E3F !important; }
@@ -59,10 +112,13 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
       .bg-slate-50 { background-color: #f8fafc !important; }
       .bg-slate-200 { background-color: #e2e8f0 !important; }
       .border-slate-300 { border-color: #cbd5e1 !important; }
+      .bg-slate-400\\/70 { background-color: rgba(148, 163, 184, 0.7) !important; }
+      canvas { max-width: 100% !important; height: auto !important; }
+      img { max-width: none !important; }
     `;
     clonedDoc.head.appendChild(style);
 
-    // Remove oklch properties from existing rules to prevent crash while preserving layout
+    // Remove oklch properties from existing rules to prevent crash
     try {
       for (const sheet of Array.from(clonedDoc.styleSheets)) {
         try {
@@ -72,31 +128,25 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
             if (rule instanceof CSSStyleRule && rule.cssText.includes("oklch")) {
               for (let j = rule.style.length - 1; j >= 0; j--) {
                 const prop = rule.style[j];
-                if (rule.style.getPropertyValue(prop).includes("oklch")) {
+                const val = rule.style.getPropertyValue(prop);
+                if (val && val.includes("oklch")) {
                   rule.style.removeProperty(prop);
                 }
               }
             }
           }
-        } catch (e) { /* ignore cross-origin */ }
+        } catch (e) {}
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
 
-    // Clean up potentially problematic SVGs (like icons) while keeping canvases (QR/Barcode)
+    // Clean up potentially problematic SVGs
     clonedDoc.querySelectorAll("svg").forEach((svg) => {
-      // Most SVGs in this app use oklch which crashes html2canvas.
-      // We'll replace them with HEX or remove them if they are just icons.
-      const isLarge = svg.getBoundingClientRect().width > 100;
-      if (!isLarge || svg.parentElement?.classList.contains("no-print")) {
-        svg.remove();
-      } else {
-        svg.setAttribute("fill", "#0B1E3F");
-        svg.setAttribute("stroke", "#0B1E3F");
-        svg.querySelectorAll("*").forEach(child => {
-          if (child.getAttribute("fill")?.includes("oklch")) child.setAttribute("fill", "#0B1E3F");
-          if (child.getAttribute("stroke")?.includes("oklch")) child.setAttribute("stroke", "#0B1E3F");
-        });
-      }
+      svg.setAttribute("fill", "#0B1E3F");
+      svg.setAttribute("stroke", "#0B1E3F");
+      svg.querySelectorAll("*").forEach(child => {
+        if (child.getAttribute("fill")?.includes("oklch")) child.setAttribute("fill", "#0B1E3F");
+        if (child.getAttribute("stroke")?.includes("oklch")) child.setAttribute("stroke", "#0B1E3F");
+      });
     });
   },
 });
@@ -130,15 +180,16 @@ function ReceiptPage() {
   }, [data?.expected_arrival_date]);
 
   const downloadPdf = async () => {
-    if (!ref.current) return;
+    if (!ref.current || !data) return;
     setDownloading(true);
+    const toastId = toast.loading("Generating high-quality PDF...");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       const html2canvas = (await import("html2canvas")).default;
       const { default: jsPDF } = await import("jspdf");
 
       const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
-      const img = canvas.toDataURL("image/png");
+      const img = canvas.toDataURL("image/png", 1.0);
 
       const imgProps = { width: canvas.width, height: canvas.height };
       const pdfWidth = 210;
@@ -150,65 +201,97 @@ function ReceiptPage() {
         format: [pdfWidth, pdfHeight]
       });
 
-      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${data?.receipt_number ?? "PME-receipt"}.pdf`);
-      toast.success("PDF downloaded successfully");
+      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      pdf.save(`PME-Receipt-${data.receipt_number}.pdf`);
+      toast.success("PDF saved successfully", { id: toastId });
     } catch (error) {
       console.error("PDF download failed", error);
-      toast.error("Failed to download PDF");
-    } finally { setDownloading(false); }
+      toast.error("Cannot generate PDF. Please try again.", { id: toastId });
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const downloadImage = async () => {
-    if (!ref.current) return;
+    if (!ref.current || !data) return;
     setDownloading(true);
+    const toastId = toast.loading("Preparing receipt image...");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
-      const link = document.createElement("a");
-      link.download = `${data?.receipt_number ?? "PME-receipt"}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      toast.success("Image downloaded successfully");
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          toast.error("Generation failed", { id: toastId });
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `PME-Receipt-${data.receipt_number}.png`;
+        link.href = url;
+        link.click();
+
+        // Clean up URL after small delay
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        toast.success("Receipt image saved", { id: toastId });
+      }, "image/png", 1.0);
     } catch (error) {
       console.error("Image download failed", error);
-      toast.error("Failed to download image");
-    } finally { setDownloading(false); }
+      toast.error("Cannot download image. Please try again.", { id: toastId });
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const shareReceipt = async () => {
-    if (!ref.current) return;
+    if (!ref.current || !data) return;
+    const toastId = toast.loading("Preparing to share...");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
 
       canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        const file = new File([blob], `${data?.receipt_number ?? "receipt"}.png`, { type: "image/png" });
+        if (!blob) {
+          toast.error("Failed to generate shareable image", { id: toastId });
+          return;
+        }
 
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: `PME Receipt ${data?.receipt_number}`,
-            text: `Receipt for shipment ${data?.tracking_number}`,
-          });
-        } else {
-          if (navigator.share) {
+        const fileName = `PME-Receipt-${data.receipt_number}.png`;
+        const file = new File([blob], fileName, { type: "image/png" });
+
+        try {
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
-              title: `PME Receipt ${data?.receipt_number}`,
+              files: [file],
+              title: `PME Receipt ${data.receipt_number}`,
+              text: `Download your PME receipt for shipment ${data.tracking_number}`,
+            });
+            toast.success("Shared successfully", { id: toastId });
+          } else if (navigator.share) {
+            await navigator.share({
+              title: `PME Receipt ${data.receipt_number}`,
               url: window.location.href,
             });
+            toast.success("Shared via link", { id: toastId });
           } else {
             await navigator.clipboard.writeText(window.location.href);
-            toast.success("Receipt link copied to clipboard");
+            toast.success("Link copied to clipboard", { id: toastId });
+          }
+        } catch (shareError) {
+          if ((shareError as Error).name !== 'AbortError') {
+            console.error("Native share failed", shareError);
+            await navigator.clipboard.writeText(window.location.href);
+            toast.success("Link copied as fallback", { id: toastId });
+          } else {
+            toast.dismiss(toastId);
           }
         }
-      }, "image/png");
+      }, "image/png", 1.0);
     } catch (error) {
       console.error("Sharing failed", error);
-      toast.error("Failed to share receipt");
+      toast.error("Failed to share receipt", { id: toastId });
     }
   };
 
@@ -285,38 +368,38 @@ function ReceiptPage() {
         {/* Receipt — premium airway bill */}
         <div ref={ref} className="print-area mx-auto bg-white text-foreground shadow-[0_30px_80px_-30px_rgba(11,30,63,0.35)] ring-1 ring-navy/10">
           {/* Header */}
-          <div className="relative grid grid-cols-12 items-center gap-3 border-b border-slate-300 px-8 pt-6 pb-4">
-            <div className="col-span-3">
-              <div className="h-20 w-full overflow-hidden rounded-md bg-slate-200/60 ring-1 ring-slate-300/70">
+          <div className="relative flex items-center justify-between gap-3 border-b border-slate-300 px-8 pt-6 pb-4">
+            <div className="w-[120px] flex-shrink-0">
+              <div className="h-16 w-full overflow-hidden rounded-md bg-slate-200/60 ring-1 ring-slate-300/70">
                 <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-navy/80 via-navy to-pme-red text-[10px] font-semibold uppercase tracking-[0.25em] text-white">
                   PME Cargo
                 </div>
               </div>
             </div>
-            <div className="col-span-6 text-center">
-              <div className="text-display text-3xl font-extrabold leading-none text-pme-red">Priority Mail Express</div>
-              <div className="mt-1 text-[13px] font-semibold italic text-navy">International Special Delivery</div>
-              <div className="mt-3 text-[11px] font-bold uppercase tracking-[0.3em] text-slate-600">Destination</div>
+            <div className="flex-1 text-center">
+              <div className="text-display text-3xl font-extrabold leading-tight text-pme-red">Priority Mail Express</div>
+              <div className="mt-0.5 text-[12px] font-semibold italic text-navy">International Special Delivery</div>
+              <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">Destination</div>
               <div className="text-display text-lg font-bold uppercase text-navy">{data.receiver_country ?? "—"}</div>
             </div>
-            <div className="col-span-3 flex items-center justify-end">
-              <Logo className="h-20 w-auto object-contain" />
+            <div className="w-[120px] flex-shrink-0 flex justify-end">
+              <Logo className="h-16 w-auto object-contain" />
             </div>
           </div>
 
           {/* FROM / SHIP TO */}
-          <div className="grid grid-cols-2 border-b border-slate-300">
-            <div className="border-r border-slate-300">
-              <div className="bg-slate-400/70 py-2 text-center text-[13px] font-bold tracking-[0.2em] text-white">FROM</div>
-              <div className="space-y-3 px-6 py-5 text-[13px]">
+          <div className="flex border-b border-slate-300">
+            <div className="flex-1 border-r border-slate-300">
+              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">FROM</div>
+              <div className="space-y-2.5 px-5 py-4 text-[13px]">
                 <Field label="SENDER NAME" value={data.sender_name} />
                 <Field label="COUNTRY / CITY" value={[data.sender_city, data.sender_country].filter(Boolean).join(", ") || "—"} />
                 {data.sender_phone && <Field label="PHONE" value={data.sender_phone} />}
               </div>
             </div>
-            <div>
-              <div className="bg-slate-400/70 py-2 text-center text-[13px] font-bold tracking-[0.2em] text-white">SHIP TO</div>
-              <div className="space-y-3 px-6 py-5 text-[13px]">
+            <div className="flex-1">
+              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">SHIP TO</div>
+              <div className="space-y-2.5 px-5 py-4 text-[13px]">
                 <Field label="RECEIVER NAME" value={data.receiver_name} />
                 <Field label="COUNTRY / CITY" value={[data.receiver_city, data.receiver_country].filter(Boolean).join(", ") || "—"} />
                 <Field label="HOME ADDRESS" value={data.receiver_address ?? "—"} />
@@ -325,9 +408,9 @@ function ReceiptPage() {
           </div>
 
           {/* Delivery time + courier */}
-          <div className="grid grid-cols-2 border-b border-slate-300 px-6 py-4 text-[13px]">
-            <div className="text-center group relative">
-              <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">DELIVERY TIME</div>
+          <div className="flex border-b border-slate-300 px-6 py-4 text-[13px]">
+            <div className="flex-1 text-center group relative border-r border-slate-300">
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">DELIVERY TIME</div>
               <div className="mt-1 flex items-center justify-center gap-2">
                 {isEditingTime ? (
                   <div className="flex items-center gap-1">
@@ -376,35 +459,37 @@ function ReceiptPage() {
                 )}
               </div>
             </div>
-            <CenterField label="COMPANY COURIER" value="ELITE COURIER" />
+            <div className="flex-1">
+              <CenterField label="COMPANY COURIER" value="ELITE COURIER" />
+            </div>
           </div>
 
           {/* Charges + contents */}
-          <div className="grid grid-cols-3 gap-4 border-b border-slate-300 px-6 py-5 text-[13px]">
-            <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Shipment registration charge</div>
-              <div className="mt-1 text-display text-base font-bold text-navy">{formatMoney(data.registration_charge, data.currency)}</div>
-              <div className="mt-3 text-[11px] font-bold uppercase tracking-wider text-slate-600">Custom clearance charge</div>
-              <div className="mt-1 text-display text-base font-bold text-navy">{formatMoney(data.custom_clearance_charge, data.currency)}</div>
+          <div className="flex gap-4 border-b border-slate-300 px-6 py-5 text-[13px]">
+            <div className="flex-1 border-r border-slate-300 pr-4">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Shipment registration charge</div>
+              <div className="mt-0.5 text-display text-base font-bold text-navy">{formatMoney(data.registration_charge, data.currency)}</div>
+              <div className="mt-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Custom clearance charge</div>
+              <div className="mt-0.5 text-display text-base font-bold text-navy">{formatMoney(data.custom_clearance_charge, data.currency)}</div>
             </div>
-            <div className="text-center">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Piece / Weight</div>
+            <div className="w-[140px] text-center border-r border-slate-300 pr-4">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Piece / Weight</div>
               <div className="mt-1 text-display text-base font-bold text-navy">{String(data.quantity).padStart(2, "0")} | {data.weight_kg}</div>
             </div>
-            <div className="text-right">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Contents</div>
-              <div className="mt-1 text-[13px] font-semibold text-navy">{data.package_contents ?? data.package_description ?? "—"}</div>
+            <div className="flex-1 text-right">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Contents</div>
+              <div className="mt-1 text-[13px] font-semibold text-navy leading-snug">{data.package_contents ?? data.package_description ?? "—"}</div>
             </div>
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 border-b border-slate-300 px-6 py-4 text-[13px]">
-            <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Departure Date</div>
+          <div className="flex border-b border-slate-300 px-6 py-4 text-[13px]">
+            <div className="flex-1 border-r border-slate-300">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Departure Date</div>
               <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.departure_date)}</div>
             </div>
-            <div className="text-right">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Arrival Date</div>
+            <div className="flex-1 text-right">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Arrival Date</div>
               <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.expected_arrival_date)}</div>
             </div>
           </div>
