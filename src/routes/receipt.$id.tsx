@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { QRCodeImage, BarcodeImage } from "@/components/QRCodeImage";
 import { Logo } from "@/components/Logo";
-import { STATUS_LABELS, PAYMENT_LABELS, formatDate, formatDateTime, formatMoney, trackingUrl } from "@/lib/pme";
+import { formatDate, formatDateTime, formatMoney, trackingUrl } from "@/lib/pme";
 import { Printer, Download, ArrowLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -49,8 +49,8 @@ function ReceiptPage() {
   if (!data) return <div className="p-10 text-muted-foreground">Loading receipt…</div>;
 
   return (
-    <div className="min-h-screen bg-surface py-6">
-      <div className="container mx-auto max-w-4xl px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 py-6">
+      <div className="container mx-auto max-w-3xl px-4">
         {/* Toolbar */}
         <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
           <Button asChild variant="outline"><Link to="/shipments/$id" params={{ id }}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Link></Button>
@@ -60,96 +60,117 @@ function ReceiptPage() {
           </div>
         </div>
 
-        {/* Receipt */}
-        <div ref={ref} className="print-area mx-auto rounded-xl border-2 border-navy/20 bg-white p-8 text-sm text-foreground shadow-card">
+        {/* Receipt — premium airway bill */}
+        <div ref={ref} className="print-area mx-auto bg-white text-foreground shadow-[0_30px_80px_-30px_rgba(11,30,63,0.35)] ring-1 ring-navy/10">
           {/* Header */}
-          <div className="flex items-start justify-between border-b-4 border-pme-red pb-4">
-            <div className="flex items-center gap-3">
-              <Logo className="h-16 w-16" />
-              <div>
-                <div className="text-display text-2xl font-bold text-navy">PRIORITY MAIL EXPRESS</div>
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-pme-red">International Special Delivery</div>
+          <div className="relative grid grid-cols-12 items-center gap-3 border-b border-slate-300 px-8 pt-6 pb-4">
+            <div className="col-span-3">
+              <div className="h-20 w-full overflow-hidden rounded-md bg-slate-200/60 ring-1 ring-slate-300/70">
+                {/* decorative aircraft strip; logo on right preserves brand */}
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-navy/80 via-navy to-pme-red text-[10px] font-semibold uppercase tracking-[0.25em] text-white">
+                  PME Cargo
+                </div>
               </div>
             </div>
-            <div className="text-right text-xs">
-              <div className="text-display text-base font-bold text-navy">AIRWAY BILL</div>
-              <div className="text-muted-foreground">Receipt No: <span className="font-mono font-semibold text-foreground">{data.receipt_number}</span></div>
-              <div className="text-muted-foreground">AWB No: <span className="font-mono font-semibold text-foreground">{data.tracking_number}</span></div>
-              <div className="text-muted-foreground">Date: <span className="font-semibold text-foreground">{formatDateTime(data.created_at)}</span></div>
-              <div className="text-muted-foreground">Branch: <span className="font-semibold text-foreground">{data.origin?.name ?? "—"}</span></div>
+            <div className="col-span-6 text-center">
+              <div className="text-display text-3xl font-extrabold leading-none text-pme-red">Priority Mail Express</div>
+              <div className="mt-1 text-[13px] font-semibold italic text-navy">International Special Delivery</div>
+              <div className="mt-3 text-[11px] font-bold uppercase tracking-[0.3em] text-slate-600">Destination</div>
+              <div className="text-display text-lg font-bold uppercase text-navy">{data.receiver_country ?? "—"}</div>
+            </div>
+            <div className="col-span-3 flex items-center justify-end">
+              <Logo className="h-20 w-auto object-contain" />
             </div>
           </div>
 
-          {/* From / To */}
-          <div className="mt-5 grid grid-cols-2 gap-4">
-            <Box title="FROM (Sender)">
-              <div className="font-semibold">{data.sender_name}</div>
-              {data.sender_phone && <div>{data.sender_phone}</div>}
-              <div>{[data.sender_city, data.sender_country].filter(Boolean).join(", ")}</div>
-              {data.sender_address && <div className="text-muted-foreground">{data.sender_address}</div>}
-            </Box>
-            <Box title="SHIP TO (Receiver)">
-              <div className="font-semibold">{data.receiver_name}</div>
-              {data.receiver_phone && <div>{data.receiver_phone}</div>}
-              <div>{[data.receiver_city, data.receiver_country].filter(Boolean).join(", ")}</div>
-              {data.receiver_address && <div className="text-muted-foreground">{data.receiver_address}</div>}
-            </Box>
-          </div>
-
-          {/* Shipment details */}
-          <div className="mt-5">
-            <SectionTitle>SHIPMENT DETAILS</SectionTitle>
-            <table className="mt-2 w-full border-collapse text-xs">
-              <tbody>
-                <Row k="Package Description" v={data.package_description ?? "—"} />
-                <Row k="Contents" v={data.package_contents ?? "—"} />
-                <Row k="Quantity" v={String(data.quantity)} k2="Weight" v2={`${data.weight_kg} kg`} />
-                <Row k="Service Type" v={data.delivery_type} k2="Delivery Time" v2={data.expected_arrival_date ? "By " + formatDate(data.expected_arrival_date) : "—"} />
-                <Row k="Departure Date" v={formatDate(data.departure_date)} k2="Expected Arrival" v2={formatDate(data.expected_arrival_date)} />
-                <Row k="Current Status" v={STATUS_LABELS[data.current_status]} />
-              </tbody>
-            </table>
-          </div>
-
-          {/* Payment */}
-          <div className="mt-5">
-            <SectionTitle>PAYMENT DETAILS</SectionTitle>
-            <table className="mt-2 w-full border-collapse text-xs">
-              <tbody>
-                <Row k="Registration Charge" v={formatMoney(data.registration_charge, data.currency)} />
-                <Row k="Custom Clearance" v={formatMoney(data.custom_clearance_charge, data.currency)} />
-                <Row k="Insurance Fee" v={formatMoney(data.insurance_fee, data.currency)} />
-                <Row k="Handling Fee" v={formatMoney(data.handling_fee, data.currency)} />
-                <Row k="Discount" v={`- ${formatMoney(data.discount, data.currency)}`} />
-                <tr className="bg-pme-red/10">
-                  <td className="border border-navy/20 px-2 py-1.5 font-bold text-navy">TOTAL AMOUNT</td>
-                  <td className="border border-navy/20 px-2 py-1.5 text-right text-display text-base font-bold text-pme-red">{formatMoney(data.total_amount, data.currency)}</td>
-                </tr>
-                <Row k="Payment Status" v={PAYMENT_LABELS[data.payment_status]} k2="Method" v2={data.payment_method ?? "—"} />
-              </tbody>
-            </table>
-          </div>
-
-          {/* QR + Barcode */}
-          <div className="mt-6 grid grid-cols-3 gap-4 rounded-lg border border-navy/20 bg-surface p-4">
-            <div className="flex flex-col items-center justify-center">
-              <QRCodeImage value={trackingUrl(data.tracking_number)} size={140} />
-              <div className="mt-1 text-[10px] text-muted-foreground">Scan to track</div>
+          {/* FROM / SHIP TO */}
+          <div className="grid grid-cols-2 border-b border-slate-300">
+            <div className="border-r border-slate-300">
+              <div className="bg-slate-400/70 py-2 text-center text-[13px] font-bold tracking-[0.2em] text-white">FROM</div>
+              <div className="space-y-3 px-6 py-5 text-[13px]">
+                <Field label="SENDER NAME" value={data.sender_name} />
+                <Field label="COUNTRY / CITY" value={[data.sender_city, data.sender_country].filter(Boolean).join(", ") || "—"} />
+                {data.sender_phone && <Field label="PHONE" value={data.sender_phone} />}
+              </div>
             </div>
-            <div className="col-span-2 flex flex-col justify-center">
-              <BarcodeImage value={data.tracking_number} className="w-full" />
-              <div className="mt-2 text-center font-mono text-xs">{data.tracking_number}</div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                Scan QR code to track shipment movement and verify receipt authenticity at
-                prioritymailexpress.com.
-              </p>
+            <div>
+              <div className="bg-slate-400/70 py-2 text-center text-[13px] font-bold tracking-[0.2em] text-white">SHIP TO</div>
+              <div className="space-y-3 px-6 py-5 text-[13px]">
+                <Field label="RECEIVER NAME" value={data.receiver_name} />
+                <Field label="COUNTRY / CITY" value={[data.receiver_city, data.receiver_country].filter(Boolean).join(", ") || "—"} />
+                <Field label="HOME ADDRESS" value={data.receiver_address ?? "—"} />
+              </div>
+            </div>
+          </div>
+
+          {/* Delivery time + courier */}
+          <div className="grid grid-cols-2 border-b border-slate-300 px-6 py-4 text-[13px]">
+            <CenterField label="DELIVERY TIME" value={data.expected_arrival_date ? new Date(data.expected_arrival_date).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "12:30 PM"} />
+            <CenterField label="COMPANY COURIER" value="ELITE COURIER" />
+          </div>
+
+          {/* Charges + contents */}
+          <div className="grid grid-cols-3 gap-4 border-b border-slate-300 px-6 py-5 text-[13px]">
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Shipment registration charge</div>
+              <div className="mt-1 text-display text-base font-bold text-navy">{formatMoney(data.registration_charge, data.currency)}</div>
+              <div className="mt-3 text-[11px] font-bold uppercase tracking-wider text-slate-600">Custom clearance charge</div>
+              <div className="mt-1 text-display text-base font-bold text-navy">{formatMoney(data.custom_clearance_charge, data.currency)}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Piece / Weight</div>
+              <div className="mt-1 text-display text-base font-bold text-navy">{String(data.quantity).padStart(2, "0")} | {data.weight_kg}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Contents</div>
+              <div className="mt-1 text-[13px] font-semibold text-navy">{data.package_contents ?? data.package_description ?? "—"}</div>
+            </div>
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-2 border-b border-slate-300 px-6 py-4 text-[13px]">
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Departure Date</div>
+              <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.departure_date)}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Arrival Date</div>
+              <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.expected_arrival_date)}</div>
+            </div>
+          </div>
+
+          {/* Barcode */}
+          <div className="flex flex-col items-center border-b border-slate-300 px-6 py-6">
+            <BarcodeImage value={data.tracking_number} className="max-w-md" />
+            <div className="mt-2 font-mono text-sm tracking-wider text-foreground">{data.tracking_number}</div>
+            <div className="mt-1 text-[11px] text-muted-foreground">Receipt: {data.receipt_number} · Issued {formatDateTime(data.created_at)}</div>
+          </div>
+
+          {/* QR + Trust */}
+          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="rounded-md bg-white p-1 ring-1 ring-slate-300">
+                <QRCodeImage value={trackingUrl(data.tracking_number)} size={88} />
+              </div>
+              <div className="text-[11px] leading-tight text-slate-600">
+                <div className="font-semibold text-navy">Scan to track live</div>
+                Verify authenticity at<br />prioritymailexpress.com
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-4 py-2">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Secured · Safe Shopping</div>
+              <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                <span className="rounded bg-blue-700 px-1.5 py-0.5 text-white">VISA</span>
+                <span className="rounded bg-slate-800 px-1.5 py-0.5 text-white">MC</span>
+                <span className="rounded bg-amber-500 px-1.5 py-0.5 text-white">AMEX</span>
+                <span className="rounded bg-sky-600 px-1.5 py-0.5 text-white">PayPal</span>
+              </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="mt-6 border-t border-border pt-3 text-center text-[10px] text-muted-foreground">
-            This receipt is system-generated and verifiable online. Keep it safe for your records.
-            <br />Priority Mail Express · International Special Delivery · support@prioritymailexpress.com
+          <div className="border-t border-slate-300 bg-slate-50 px-6 py-3 text-center text-[10px] text-slate-600">
+            This receipt is system-generated and verifiable online · Priority Mail Express · International Special Delivery · support@prioritymailexpress.com
           </div>
         </div>
       </div>
@@ -157,24 +178,19 @@ function ReceiptPage() {
   );
 }
 
-function Box({ title, children }: { title: string; children: React.ReactNode }) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-navy/30 bg-surface/50 p-3">
-      <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-pme-red">{title}</div>
-      <div className="space-y-0.5 text-xs">{children}</div>
+    <div className="text-center">
+      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">{label}</div>
+      <div className="mt-0.5 text-[13px] font-medium text-navy">{value}</div>
     </div>
   );
 }
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-t-md bg-navy px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-navy-foreground">{children}</div>;
-}
-function Row({ k, v, k2, v2 }: { k: string; v: string; k2?: string; v2?: string }) {
+function CenterField({ label, value }: { label: string; value: string }) {
   return (
-    <tr>
-      <td className="w-1/4 border border-navy/20 bg-muted/40 px-2 py-1.5 font-semibold">{k}</td>
-      <td className={`border border-navy/20 px-2 py-1.5 ${k2 ? "w-1/4" : ""}`}>{v}</td>
-      {k2 && <td className="w-1/4 border border-navy/20 bg-muted/40 px-2 py-1.5 font-semibold">{k2}</td>}
-      {k2 && <td className="border border-navy/20 px-2 py-1.5">{v2}</td>}
-    </tr>
+    <div className="text-center">
+      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">{label}</div>
+      <div className="mt-1 text-display text-base font-semibold text-navy">{value}</div>
+    </div>
   );
 }
