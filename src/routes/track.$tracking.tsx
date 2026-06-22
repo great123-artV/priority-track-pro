@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
+import { ShipmentMap } from "@/components/ShipmentMap";
 import {
   STATUS_LABELS, statusBadgeClass, formatDate, formatDateTime,
   computeShipmentProgress, healthBadgeClass,
@@ -125,6 +126,11 @@ function TrackDetail() {
                   departure={data.shipment.departure_date}
                   expected={data.shipment.expected_arrival_date}
                   deliveredAt={data.delivery?.delivered_at ?? null}
+                  originCity={data.shipment.sender_city}
+                  originCountry={data.shipment.sender_country}
+                  destCity={data.shipment.destination_city}
+                  destCountry={data.shipment.destination_country}
+                  contents={data.shipment.package_contents}
                 />
               </div>
 
@@ -289,6 +295,11 @@ function ProgressHero(props: {
   departure: string | null;
   expected: string | null;
   deliveredAt: string | null;
+  originCity?: string | null;
+  originCountry?: string | null;
+  destCity?: string | null;
+  destCountry?: string | null;
+  contents?: string | null;
 }) {
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -306,7 +317,8 @@ function ProgressHero(props: {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-navy via-navy to-[#0a1530] p-6 text-white shadow-elevated md:p-8">
       <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-pme-red/20 blur-3xl" />
-      <div className="relative flex flex-wrap items-start justify-between gap-4">
+
+      <div className="relative mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">Tracking Number</div>
           <div className="text-display text-2xl font-bold md:text-3xl">{props.tracking}</div>
@@ -318,6 +330,17 @@ function ProgressHero(props: {
             {props.location ?? "—"}
           </div>
         </div>
+      </div>
+
+      <div className="relative mb-8">
+        <ShipmentMap
+          originCity={props.originCity}
+          originCountry={props.originCountry}
+          destCity={props.destCity}
+          destCountry={props.destCountry}
+          progress={p.progressPct}
+          contents={props.contents}
+        />
       </div>
 
       {/* Progress */}
