@@ -37,8 +37,9 @@ function Landing() {
 
   const onTrack = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code.trim()) return;
-    navigate({ to: "/track/$tracking", params: { tracking: code.trim() } });
+    const trimmed = code.trim();
+    if (!trimmed) return;
+    navigate({ to: "/track/$tracking", params: { tracking: trimmed } });
   };
 
   return (

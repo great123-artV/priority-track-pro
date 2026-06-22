@@ -29,7 +29,11 @@ function TrackSearch() {
           <p className="mt-2 text-muted-foreground">Enter your tracking number or scan the QR on your receipt.</p>
         </div>
         <form
-          onSubmit={(e) => { e.preventDefault(); if (code.trim()) navigate({ to: "/track/$tracking", params: { tracking: code.trim() } }); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const trimmed = code.trim();
+            if (trimmed) navigate({ to: "/track/$tracking", params: { tracking: trimmed } });
+          }}
           className="flex gap-2 rounded-xl border border-border bg-card p-3 shadow-card"
         >
           <div className="relative flex-1">
