@@ -59,35 +59,15 @@ function TrackDetail() {
 
         {data && (
           <>
-            {/* Status header */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card md:p-8">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Tracking Number</div>
-                  <div className="text-display text-2xl font-bold md:text-3xl">{data.shipment.tracking_number}</div>
-                  <span className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold ${statusBadgeClass(data.shipment.current_status)}`}>
-                    {STATUS_LABELS[data.shipment.current_status]}
-                  </span>
-                </div>
-                <div className="text-right text-sm">
-                  <div className="text-muted-foreground">Current Location</div>
-                  <div className="flex items-center justify-end gap-1 font-semibold">
-                    <MapPin className="h-4 w-4 text-pme-red" />
-                    {data.shipment.current_location ?? "—"}
-                  </div>
-                </div>
-              </div>
+            <ProgressHero
+              tracking={data.shipment.tracking_number}
+              status={data.shipment.current_status}
+              location={data.shipment.current_location}
+              departure={data.shipment.departure_date}
+              expected={data.shipment.expected_arrival_date}
+              deliveredAt={data.delivery?.delivered_at ?? null}
+            />
 
-              {/* Progress */}
-              <div className="mt-6">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Registered</span><span>{statusProgress(data.shipment.current_status)}%</span><span>Delivered</span>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-gradient-to-r from-navy to-pme-red transition-all" style={{ width: `${statusProgress(data.shipment.current_status)}%` }} />
-                </div>
-              </div>
-            </div>
 
             {/* KPI grid */}
             <div className="mt-6 grid gap-4 md:grid-cols-3">
