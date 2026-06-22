@@ -1,5 +1,5 @@
-import { MapPin, Plane } from "lucide-react";
-import { useEffect, useState } from "react";
+import { MapPin, Plane, Cloud } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
 
 interface ShipmentMapProps {
   originCity?: string | null;
@@ -8,6 +8,16 @@ interface ShipmentMapProps {
   destCountry?: string | null;
   progress: number;
   contents?: string | null;
+}
+
+interface CloudData {
+  id: number;
+  top: string;
+  scale: number;
+  duration: string;
+  delay: string;
+  opacity: number;
+  zIndex: string;
 }
 
 export function ShipmentMap({
@@ -22,6 +32,23 @@ export function ShipmentMap({
 
   useEffect(() => {
     setIsLoaded(true);
+  }, []);
+
+  // Generate stable cloud data
+  const clouds = useMemo(() => {
+    const cloudArray: CloudData[] = [];
+    for (let i = 0; i < 8; i++) {
+      cloudArray.push({
+        id: i,
+        top: `${10 + Math.random() * 70}%`,
+        scale: 0.5 + Math.random() * 1.5,
+        duration: `${25 + Math.random() * 35}s`,
+        delay: `${-Math.random() * 60}s`,
+        opacity: 0.15 + Math.random() * 0.35,
+        zIndex: i % 2 === 0 ? "z-10" : "z-30", // some below plane (z-20), some above
+      });
+    }
+    return cloudArray;
   }, []);
 
   // Simple coordinate mapping for a stylized map
@@ -66,9 +93,29 @@ export function ShipmentMap({
         <rect width="100" height="100" fill="url(#grid)" />
       </svg>
 
+      {/* Background Clouds */}
+      {clouds
+        .filter((c) => c.zIndex === "z-10")
+        .map((cloud) => (
+          <div
+            key={cloud.id}
+            className={`absolute animate-cloud-drift pointer-events-none ${cloud.zIndex}`}
+            style={{
+              top: cloud.top,
+              animationDuration: cloud.duration,
+              animationDelay: cloud.delay,
+              opacity: cloud.opacity,
+            }}
+          >
+            <div style={{ transform: `scale(${cloud.scale})` }}>
+              <Cloud className="text-white fill-white blur-[1px]" size={48} />
+            </div>
+          </div>
+        ))}
+
       <svg
         viewBox="0 0 100 100"
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-0 h-full w-full z-20"
         preserveAspectRatio="none"
       >
         {/* Connection path */}
@@ -106,7 +153,7 @@ export function ShipmentMap({
 
       {/* Origin Marker */}
       <div
-        className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
+        className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 z-20"
         style={{ left: `${origin.x}%`, top: `${origin.y}%` }}
       >
         <MapPin className="h-4 w-4 text-white" />
@@ -117,7 +164,7 @@ export function ShipmentMap({
 
       {/* Destination Marker */}
       <div
-        className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
+        className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 z-20"
         style={{ left: `${dest.x}%`, top: `${dest.y}%` }}
       >
         <MapPin className="h-4 w-4 text-pme-red" />
@@ -129,7 +176,7 @@ export function ShipmentMap({
       {/* Moving Plane Icon & Label */}
       {progress > 0 && progress < 100 && (
         <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-1000"
+          className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 z-20"
           style={{
             left: `${currentX}%`,
             top: `${currentY - 5}%`, // slightly offset for the curve
@@ -151,8 +198,28 @@ export function ShipmentMap({
         </div>
       )}
 
+      {/* Foreground Clouds */}
+      {clouds
+        .filter((c) => c.zIndex === "z-30")
+        .map((cloud) => (
+          <div
+            key={cloud.id}
+            className={`absolute animate-cloud-drift pointer-events-none ${cloud.zIndex}`}
+            style={{
+              top: cloud.top,
+              animationDuration: cloud.duration,
+              animationDelay: cloud.delay,
+              opacity: cloud.opacity,
+            }}
+          >
+            <div style={{ transform: `scale(${cloud.scale})` }}>
+              <Cloud className="text-white fill-white blur-[2px]" size={48} />
+            </div>
+          </div>
+        ))}
+
       {/* Overlay Status */}
-      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-lg bg-navy/80 px-3 py-1.5 backdrop-blur-md">
+      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-lg bg-navy/80 px-3 py-1.5 backdrop-blur-md z-40">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 animate-pulse rounded-full bg-pme-red" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-white/80">

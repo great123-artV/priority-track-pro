@@ -173,6 +173,19 @@
   border-bottom: 1px solid color-mix(in oklab, oklch(0.46 0.17 262) 14%, transparent);
 }
 
+@keyframes cloud-drift {
+  from {
+    left: -100px;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.animate-cloud-drift {
+  animation: cloud-drift linear infinite;
+}
+
 /* Brand-tinted mesh backdrop */
 @utility bg-mesh {
   background-image:
