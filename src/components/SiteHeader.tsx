@@ -4,21 +4,21 @@ import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center">
+    <header className="sticky top-0 z-40 glass-header">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+        <Link to="/" className="flex items-center" aria-label="Priority Mail Express home">
           <LogoLockup />
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
-          <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-          <Link to="/track" className="hover:text-foreground transition-colors">Track Shipment</Link>
-          <Link to="/verify" className="hover:text-foreground transition-colors">Verify Receipt</Link>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-foreground/70 md:flex">
+          <Link to="/" className="transition-colors hover:text-foreground">Home</Link>
+          <Link to="/track" className="transition-colors hover:text-foreground">Track Shipment</Link>
+          <Link to="/verify" className="transition-colors hover:text-foreground">Verify Receipt</Link>
         </nav>
         <div className="flex items-center gap-2">
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+          <Button asChild variant="outline" size="sm" className="hidden border-border/70 bg-white/60 backdrop-blur sm:inline-flex">
             <Link to="/track">Track</Link>
           </Button>
-          <Button asChild size="sm" className="bg-navy text-navy-foreground hover:bg-navy/90">
+          <Button asChild size="sm" className="bg-gradient-brand text-white shadow-card hover:opacity-95">
             <Link to="/auth">Staff Login</Link>
           </Button>
         </div>
