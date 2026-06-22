@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { QRCodeImage, BarcodeImage } from "@/components/QRCodeImage";
 import { Logo } from "@/components/Logo";
 import { formatDate, formatDateTime, formatMoney, trackingUrl } from "@/lib/pme";
-import { Printer, Download, ArrowLeft } from "lucide-react";
+import { Printer, Download, ArrowLeft, Share2, FileImage, Check, X, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/receipt/$id")({
   head: ({ params }) => ({ meta: [{ title: `Receipt ${params.id} — PME` }] }),
@@ -16,8 +17,12 @@ export const Route = createFileRoute("/receipt/$id")({
 
 function ReceiptPage() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
   const ref = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [newTime, setNewTime] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["receipt", id],
@@ -30,20 +35,184 @@ function ReceiptPage() {
     },
   });
 
+  useEffect(() => {
+    if (data?.expected_arrival_date) {
+      // Use a fixed date to parse the expected_arrival_date which might only be a date string
+      const date = new Date(data.expected_arrival_date);
+      // If it's a date-only string like "2026-06-25", it defaults to 00:00 UTC
+      setNewTime(date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }));
+    }
+  }, [data?.expected_arrival_date]);
+
   const downloadPdf = async () => {
     if (!ref.current) return;
     setDownloading(true);
     try {
       const html2canvas = (await import("html2canvas")).default;
       const { default: jsPDF } = await import("jspdf");
-      const canvas = await html2canvas(ref.current, { scale: 2, backgroundColor: "#ffffff" });
+      const canvas = await html2canvas(ref.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        width: ref.current.scrollWidth,
+        height: ref.current.scrollHeight,
+        windowWidth: ref.current.scrollWidth,
+        windowHeight: ref.current.scrollHeight,
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.querySelector(".print-area") as HTMLElement;
+          if (el) {
+            el.style.transform = "none";
+            el.style.boxShadow = "none";
+            el.style.border = "none";
+            el.style.margin = "0";
+            el.style.padding = "0";
+            el.style.width = `${ref.current?.scrollWidth}px`;
+          }
+        }
+      });
       const img = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({ unit: "mm", format: "a4" });
-      const w = pdf.internal.pageSize.getWidth();
-      const h = (canvas.height * w) / canvas.width;
-      pdf.addImage(img, "PNG", 0, 0, w, h);
+
+      // Calculate dimensions to fit or custom size
+      const imgProps = { width: canvas.width, height: canvas.height };
+      const pdfWidth = 210; // A4 width in mm
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      // Create PDF with custom height to ensure "one paper" (no page breaks)
+      const pdf = new jsPDF({
+        orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
+        unit: "mm",
+        format: [pdfWidth, pdfHeight]
+      });
+
+      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${data?.receipt_number ?? "PME-receipt"}.pdf`);
+      toast.success("PDF downloaded successfully");
+    } catch (error) {
+      console.error("PDF download failed", error);
+      toast.error("Failed to download PDF");
     } finally { setDownloading(false); }
+  };
+
+  const downloadImage = async () => {
+    if (!ref.current) return;
+    setDownloading(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(ref.current, {
+        scale: 3,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        width: ref.current.scrollWidth,
+        height: ref.current.scrollHeight,
+        windowWidth: ref.current.scrollWidth,
+        windowHeight: ref.current.scrollHeight,
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.querySelector(".print-area") as HTMLElement;
+          if (el) {
+            el.style.transform = "none";
+            el.style.boxShadow = "none";
+            el.style.border = "none";
+            el.style.margin = "0";
+            el.style.padding = "0";
+            el.style.width = `${ref.current?.scrollWidth}px`;
+          }
+        }
+      });
+      const link = document.createElement("a");
+      link.download = `${data?.receipt_number ?? "PME-receipt"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Image downloaded successfully");
+    } catch (error) {
+      console.error("Image download failed", error);
+      toast.error("Failed to download image");
+    } finally { setDownloading(false); }
+  };
+
+  const shareReceipt = async () => {
+    if (!ref.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(ref.current, { scale: 2, backgroundColor: "#ffffff" });
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], `${data?.receipt_number ?? "receipt"}.png`, { type: "image/png" });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `PME Receipt ${data?.receipt_number}`,
+            text: `Receipt for shipment ${data?.tracking_number}`,
+          });
+        } else {
+          // Fallback to sharing URL if file share not supported
+          if (navigator.share) {
+            await navigator.share({
+              title: `PME Receipt ${data?.receipt_number}`,
+              url: window.location.href,
+            });
+          } else {
+            await navigator.clipboard.writeText(window.location.href);
+            toast.success("Receipt link copied to clipboard");
+          }
+        }
+      }, "image/png");
+    } catch (error) {
+      console.error("Sharing failed", error);
+      toast.error("Failed to share receipt");
+    }
+  };
+
+  const saveDeliveryTime = async () => {
+    if (!data || !newTime) return;
+    setIsSaving(true);
+    try {
+      // Parse the time string (e.g., "10:30 AM")
+      const timeMatch = newTime.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (!timeMatch) {
+        toast.error("Invalid time format. Please use HH:MM AM/PM");
+        setIsSaving(false);
+        return;
+      }
+
+      let [_, hours, minutes, ampm] = timeMatch;
+      let h = parseInt(hours);
+      const m = parseInt(minutes);
+
+      if (ampm) {
+        if (ampm.toUpperCase() === "PM" && h < 12) h += 12;
+        if (ampm.toUpperCase() === "AM" && h === 12) h = 0;
+      }
+
+      // Robust date-time merging: Extract date portion from existing string (YYYY-MM-DD)
+      // and combine with new time to avoid timezone calendar shifts.
+      const datePart = (data.expected_arrival_date || new Date().toISOString()).split("T")[0];
+      const timePart = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+
+      // We assume the DB is storing in UTC or has a fixed offset.
+      // This format (YYYY-MM-DDTHH:mm:ss) is generally interpreted as local by browser
+      // but Supabase expects ISO. Let's create a proper ISO string.
+      const isoDate = `${datePart}T${timePart}Z`;
+
+      const { error } = await supabase
+        .from("shipments")
+        .update({ expected_arrival_date: isoDate })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      await queryClient.invalidateQueries({ queryKey: ["receipt", id] });
+      setIsEditingTime(false);
+      toast.success("Delivery time updated");
+    } catch (error) {
+      console.error("Failed to update delivery time", error);
+      toast.error("Failed to update delivery time");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!data) return <div className="p-10 text-muted-foreground">Loading receipt…</div>;
@@ -53,10 +222,24 @@ function ReceiptPage() {
       <div className="container mx-auto max-w-3xl px-4">
         {/* Toolbar */}
         <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
-          <Button asChild variant="outline"><Link to="/shipments/$id" params={{ id }}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Link></Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" /> Print</Button>
-            <Button onClick={downloadPdf} disabled={downloading} className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90"><Download className="mr-2 h-4 w-4" /> {downloading ? "Generating…" : "Download PDF"}</Button>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/shipments/$id" params={{ id }}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Link>
+          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => window.print()}>
+              <Printer className="mr-2 h-4 w-4" /> Print
+            </Button>
+            <Button variant="outline" size="sm" onClick={downloadImage} disabled={downloading}>
+              <FileImage className="mr-2 h-4 w-4" /> Image
+            </Button>
+            <Button variant="outline" size="sm" onClick={downloadPdf} disabled={downloading}>
+              <Download className="mr-2 h-4 w-4" /> PDF
+            </Button>
+            <Button variant="outline" size="sm" onClick={shareReceipt}>
+              <Share2 className="mr-2 h-4 w-4" /> Share
+            </Button>
           </div>
         </div>
 
@@ -105,7 +288,56 @@ function ReceiptPage() {
 
           {/* Delivery time + courier */}
           <div className="grid grid-cols-2 border-b border-slate-300 px-6 py-4 text-[13px]">
-            <CenterField label="DELIVERY TIME" value={data.expected_arrival_date ? new Date(data.expected_arrival_date).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "12:30 PM"} />
+            <div className="text-center group relative">
+              <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">DELIVERY TIME</div>
+              <div className="mt-1 flex items-center justify-center gap-2">
+                {isEditingTime ? (
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="time"
+                      value={(() => {
+                        const match = newTime.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+                        if (!match) return "";
+                        let [_, h, m, ampm] = match;
+                        let hours = parseInt(h);
+                        if (ampm?.toUpperCase() === "PM" && hours < 12) hours += 12;
+                        if (ampm?.toUpperCase() === "AM" && hours === 12) hours = 0;
+                        return `${String(hours).padStart(2, "0")}:${m}`;
+                      })()}
+                      onChange={(e) => {
+                        const [h, m] = e.target.value.split(":");
+                        if (!h || !m) return;
+                        let hours = parseInt(h);
+                        const ampm = hours >= 12 ? "PM" : "AM";
+                        hours = hours % 12 || 12;
+                        setNewTime(`${hours}:${m} ${ampm}`);
+                      }}
+                      className="w-32 rounded border border-slate-300 px-2 py-0.5 text-center text-sm font-semibold text-navy focus:border-pme-red focus:outline-none"
+                      autoFocus
+                    />
+                    <button onClick={saveDeliveryTime} disabled={isSaving} className="text-emerald-600 hover:text-emerald-700">
+                      <Check className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => setIsEditingTime(false)} className="text-rose-600 hover:text-rose-700">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-display text-base font-semibold text-navy">
+                      {newTime || "12:30 PM"}
+                    </div>
+                    <button
+                      onClick={() => setIsEditingTime(true)}
+                      className="no-print text-slate-400 transition-colors hover:text-pme-red"
+                      title="Edit delivery time"
+                    >
+                      <Clock className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
             <CenterField label="COMPANY COURIER" value="ELITE COURIER" />
           </div>
 
