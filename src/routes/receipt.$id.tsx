@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { QRCodeImage, BarcodeImage } from "@/components/QRCodeImage";
 import { Logo } from "@/components/Logo";
-import { formatDate, formatDateTime, formatMoney, trackingUrl } from "@/lib/pme";
+import { formatDate, formatDateTime, formatMoney, getVerificationCode, trackingUrl } from "@/lib/pme";
 import { Printer, Download, ArrowLeft, Share2, FileImage, Check, X, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
