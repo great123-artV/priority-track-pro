@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { QRCodeImage, BarcodeImage } from "@/components/QRCodeImage";
 import { Logo } from "@/components/Logo";
-import { formatDate, formatDateTime, formatMoney, trackingUrl } from "@/lib/pme";
+import { formatDate, formatDateTime, formatMoney, getVerificationCode, trackingUrl } from "@/lib/pme";
 import { Printer, Download, ArrowLeft, Share2, FileImage, Check, X, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -509,6 +509,11 @@ function ReceiptPage() {
             <BarcodeImage value={data.tracking_number} className="max-w-md" />
             <div className="mt-2 font-mono text-sm tracking-wider text-foreground">{data.tracking_number}</div>
             <div className="mt-1 text-[11px] text-muted-foreground">Receipt: {data.receipt_number} · Issued {formatDateTime(data.created_at)}</div>
+            <div className="mt-3 flex items-center gap-2 rounded-md border border-pme-red/30 bg-pme-red/5 px-3 py-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-pme-red">Verification Code</span>
+              <span className="font-mono text-base font-bold tracking-[0.35em] text-navy">{getVerificationCode(data.receipt_number)}</span>
+            </div>
+            <div className="mt-1 text-[10px] text-slate-500">Confirm authenticity at prioritymailexpress.com/verify</div>
           </div>
 
           {/* QR + Trust */}

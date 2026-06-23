@@ -214,3 +214,29 @@ export function trackingUrl(tracking: string) {
   if (typeof window === "undefined") return `/track/${tracking}`;
   return `${window.location.origin}/track/${tracking}`;
 }
+
+// Deterministic 6-char verification code derived from the receipt number.
+// Same receipt always produces the same code; different receipts produce different codes.
+export function getVerificationCode(receiptNumber: string | null | undefined): string {
+  if (!receiptNumber) return "------";
+  const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars
+  let h1 = 0x811c9dc5;
+  let h2 = 0xdeadbeef;
+  for (let i = 0; i < receiptNumber.length; i++) {
+    const c = receiptNumber.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619) >>> 0;
+    h2 = Math.imul(h2 ^ c, 2246822519) >>> 0;
+  }
+  let combined = (BigInt(h1) << 32n) | BigInt(h2);
+  let out = "";
+  const base = BigInt(ALPHABET.length);
+  for (let i = 0; i < 6; i++) {
+    out += ALPHABET[Number(combined % base)];
+    combined = combined / base;
+  }
+  return out;
+}
+
+export function verifyReceiptCode(receiptNumber: string, code: string): boolean {
+  return getVerificationCode(receiptNumber).toUpperCase() === code.trim().toUpperCase();
+}
