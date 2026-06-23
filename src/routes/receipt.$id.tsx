@@ -179,34 +179,47 @@ function ReceiptPage() {
     }
   }, [data?.expected_arrival_date]);
 
+  const captureCanvas = async (): Promise<HTMLCanvasElement> => {
+    const { toCanvas } = await import("html-to-image");
+    const node = ref.current!;
+    // Wait a tick to ensure fonts/canvases (barcode, qr) are painted
+    await new Promise((r) => setTimeout(r, 250));
+    return toCanvas(node, {
+      pixelRatio: 2.5,
+      backgroundColor: "#ffffff",
+      cacheBust: true,
+      skipFonts: false,
+      width: node.offsetWidth,
+      height: node.offsetHeight,
+      style: { transform: "none", boxShadow: "none", margin: "0" },
+      filter: (el) => {
+        if (!(el instanceof HTMLElement)) return true;
+        return !el.classList?.contains("no-print");
+      },
+    });
+  };
+
   const downloadPdf = async () => {
     if (!ref.current || !data) return;
     setDownloading(true);
-    const toastId = toast.loading("Generating high-quality PDF...");
+    const toastId = toast.loading("Generating PDF…");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await captureCanvas();
       const { default: jsPDF } = await import("jspdf");
-
-      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
       const img = canvas.toDataURL("image/png", 1.0);
-
-      const imgProps = { width: canvas.width, height: canvas.height };
       const pdfWidth = 210;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       const pdf = new jsPDF({
         orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
         unit: "mm",
-        format: [pdfWidth, pdfHeight]
+        format: [pdfWidth, pdfHeight],
       });
-
-      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+      pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
       pdf.save(`PME-Receipt-${data.receipt_number}.pdf`);
-      toast.success("PDF saved successfully", { id: toastId });
+      toast.success("PDF saved", { id: toastId });
     } catch (error) {
       console.error("PDF download failed", error);
-      toast.error("Cannot generate PDF. Please try again.", { id: toastId });
+      toast.error("Couldn't generate PDF. Try again.", { id: toastId });
     } finally {
       setDownloading(false);
     }
@@ -215,12 +228,9 @@ function ReceiptPage() {
   const downloadImage = async () => {
     if (!ref.current || !data) return;
     setDownloading(true);
-    const toastId = toast.loading("Preparing receipt image...");
+    const toastId = toast.loading("Preparing receipt image…");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
-
+      const canvas = await captureCanvas();
       canvas.toBlob((blob) => {
         if (!blob) {
           toast.error("Generation failed", { id: toastId });
@@ -230,15 +240,15 @@ function ReceiptPage() {
         const link = document.createElement("a");
         link.download = `PME-Receipt-${data.receipt_number}.png`;
         link.href = url;
+        document.body.appendChild(link);
         link.click();
-
-        // Clean up URL after small delay
-        setTimeout(() => URL.revokeObjectURL(url), 100);
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
         toast.success("Receipt image saved", { id: toastId });
       }, "image/png", 1.0);
     } catch (error) {
       console.error("Image download failed", error);
-      toast.error("Cannot download image. Please try again.", { id: toastId });
+      toast.error("Couldn't download image. Try again.", { id: toastId });
     } finally {
       setDownloading(false);
     }
@@ -246,49 +256,49 @@ function ReceiptPage() {
 
   const shareReceipt = async () => {
     if (!ref.current || !data) return;
-    const toastId = toast.loading("Preparing to share...");
+    const toastId = toast.loading("Preparing to share…");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(ref.current, getHtml2CanvasConfig(ref));
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          toast.error("Failed to generate shareable image", { id: toastId });
-          return;
-        }
-
-        const fileName = `PME-Receipt-${data.receipt_number}.png`;
-        const file = new File([blob], fileName, { type: "image/png" });
-
-        try {
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: `PME Receipt ${data.receipt_number}`,
-              text: `Download your PME receipt for shipment ${data.tracking_number}`,
-            });
-            toast.success("Shared successfully", { id: toastId });
-          } else if (navigator.share) {
-            await navigator.share({
-              title: `PME Receipt ${data.receipt_number}`,
-              url: window.location.href,
-            });
-            toast.success("Shared via link", { id: toastId });
-          } else {
+      const canvas = await captureCanvas();
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob((b) => resolve(b), "image/png", 1.0),
+      );
+      if (!blob) {
+        toast.error("Couldn't generate image", { id: toastId });
+        return;
+      }
+      const fileName = `PME-Receipt-${data.receipt_number}.png`;
+      const file = new File([blob], fileName, { type: "image/png" });
+      try {
+        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `PME Receipt ${data.receipt_number}`,
+            text: `Priority Mail Express receipt for shipment ${data.tracking_number}`,
+          });
+          toast.success("Shared", { id: toastId });
+        } else {
+          // Fallback: download the image so the user can share it manually
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.download = fileName;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 500);
+          try {
             await navigator.clipboard.writeText(window.location.href);
-            toast.success("Link copied to clipboard", { id: toastId });
-          }
-        } catch (shareError) {
-          if ((shareError as Error).name !== 'AbortError') {
-            console.error("Native share failed", shareError);
-            await navigator.clipboard.writeText(window.location.href);
-            toast.success("Link copied as fallback", { id: toastId });
-          } else {
-            toast.dismiss(toastId);
-          }
+          } catch {}
+          toast.success("Image downloaded — share it from your gallery", { id: toastId });
         }
-      }, "image/png", 1.0);
+      } catch (shareError) {
+        if ((shareError as Error).name !== "AbortError") {
+          console.error("Share failed", shareError);
+          toast.error("Sharing cancelled", { id: toastId });
+        } else {
+          toast.dismiss(toastId);
+        }
+      }
     } catch (error) {
       console.error("Sharing failed", error);
       toast.error("Failed to share receipt", { id: toastId });

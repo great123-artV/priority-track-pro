@@ -39,7 +39,6 @@ export function SiteFooter() {
             className="absolute bottom-2 left-2 h-2 w-2 rounded-full bg-white/10 cursor-default"
           />
           <div>© {new Date().getFullYear()} Priority Mail Express. All rights reserved.</div>
-          <div>Powered by <span className="text-white">Nosky Tech</span></div>
         </div>
       </div>
     </footer>
