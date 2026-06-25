@@ -524,7 +524,16 @@ function ReceiptPage() {
               </div>
               <div className="text-[11px] leading-tight text-slate-600">
                 <div className="font-semibold text-navy">Scan to track live</div>
-                Verify authenticity at<br />prioritymailexpress.com
+                <span className="break-all">{trackingUrl(data.tracking_number)}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="rounded-md bg-white p-1 ring-1 ring-slate-300">
+                <QRCodeImage value={verifyUrl(data.receipt_number, getVerificationCode(data.receipt_number))} size={72} />
+              </div>
+              <div className="text-[11px] leading-tight text-slate-600">
+                <div className="font-semibold text-navy">Scan to verify authenticity</div>
+                <span className="break-all">{verifyUrl(data.receipt_number)}</span>
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-4 py-2">
