@@ -1,5 +1,36 @@
 import { Link } from "@tanstack/react-router";
 import { LogoLockup } from "./Logo";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+
+type BIPEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
+function triggerInstall() {
+  if (typeof window === "undefined") return;
+  const w = window as unknown as { __pmeDeferredInstall?: BIPEvent };
+  const ev = w.__pmeDeferredInstall;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const standalone =
+    window.matchMedia?.("(display-mode: standalone)").matches ||
+    (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+
+  if (standalone) {
+    toast.success("App already installed");
+    return;
+  }
+  if (ev) {
+    ev.prompt();
+    return;
+  }
+  if (isIOS) {
+    toast.info("To install: tap Share, then 'Add to Home Screen'.");
+    return;
+  }
+  toast.info("Open in Chrome/Edge and use the menu → 'Install app'.");
+}
 
 export function SiteFooter() {
   return (
@@ -11,6 +42,13 @@ export function SiteFooter() {
             Priority Mail Express delivers fast, secure international courier and logistics
             services with end-to-end QR-verified tracking for every shipment.
           </p>
+          <button
+            onClick={triggerInstall}
+            className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:border-pme-red/60 hover:bg-pme-red/15"
+          >
+            <Download className="h-4 w-4" />
+            Download App
+          </button>
         </div>
         <div>
           <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">Services</div>
