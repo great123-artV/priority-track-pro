@@ -104,6 +104,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <InstallAppPrompt />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
