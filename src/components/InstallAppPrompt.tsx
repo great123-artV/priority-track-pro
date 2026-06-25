@@ -48,10 +48,17 @@ export function InstallAppPrompt() {
 
     const onBIP = (e: Event) => {
       e.preventDefault();
-      setDeferred(e as BIPEvent);
+      const ev = e as BIPEvent;
+      (window as unknown as { __pmeDeferredInstall?: BIPEvent }).__pmeDeferredInstall = ev;
+      setDeferred(ev);
       setVisible(true);
     };
     window.addEventListener("beforeinstallprompt", onBIP);
+    const onInstalled = () => {
+      (window as unknown as { __pmeDeferredInstall?: BIPEvent }).__pmeDeferredInstall = undefined;
+      setVisible(false);
+    };
+    window.addEventListener("appinstalled", onInstalled);
 
     if (isIOS()) {
       const t = window.setTimeout(() => {
