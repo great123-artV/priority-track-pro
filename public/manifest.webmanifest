@@ -1,0 +1,21 @@
+{
+  "name": "Priority Mail Express",
+  "short_name": "PME",
+  "description": "International Special Delivery — track shipments, verify receipts, and manage deliveries.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B1E3F",
+  "theme_color": "#0B1E3F",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Track Shipment", "url": "/track", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Verify Receipt", "url": "/verify", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
