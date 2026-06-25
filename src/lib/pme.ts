@@ -210,9 +210,21 @@ export function formatDate(d: string | Date | null | undefined) {
   return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" });
 }
 
+// Absolute production site URL — used for QR codes and shareable links so they
+// resolve correctly when scanned/opened off-device (not tied to the current host).
+export const SITE_URL: string = (() => {
+  const fromEnv = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_SITE_URL;
+  if (fromEnv && fromEnv.length > 0) return fromEnv.replace(/\/$/, "");
+  return "https://priority-track-pro.lovable.app";
+})();
+
 export function trackingUrl(tracking: string) {
-  if (typeof window === "undefined") return `/track/${tracking}`;
-  return `${window.location.origin}/track/${tracking}`;
+  return `${SITE_URL}/track/${tracking}`;
+}
+
+export function verifyUrl(receipt: string, code?: string) {
+  const base = `${SITE_URL}/verify/${receipt}`;
+  return code ? `${base}?code=${encodeURIComponent(code)}` : base;
 }
 
 // Deterministic 6-char verification code derived from the receipt number.
