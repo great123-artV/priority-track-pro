@@ -28,6 +28,7 @@ export const Route = createFileRoute("/track/$tracking")({
 });
 
 function TrackDetail() {
+  const { t } = useTranslation();
   const { tracking } = Route.useParams();
   const navigate = useNavigate();
   const [isRedirecting, setIsRedirecting] = useState(false);
