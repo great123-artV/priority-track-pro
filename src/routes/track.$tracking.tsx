@@ -84,7 +84,7 @@ function TrackDetail() {
         {(isLoading || isRedirecting) && (
           <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
             <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-pme-red border-t-transparent" />
-            <p>Locating shipment...</p>
+            <p>{t("common.locating")}</p>
           </div>
         )}
 
@@ -93,24 +93,20 @@ function TrackDetail() {
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
               <AlertTriangle className="h-10 w-10 text-destructive" />
             </div>
-            <h1 className="text-display text-3xl font-bold text-foreground">Shipment Not Found</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              We could not locate a shipment with the tracking number entered.
-            </p>
+            <h1 className="text-display text-3xl font-bold text-foreground">{t("track.notFoundTitle")}</h1>
+            <p className="mt-4 text-lg text-muted-foreground">{t("track.notFoundMessage")}</p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg" className="min-w-[160px] bg-pme-red hover:bg-pme-red/90">
-                <Link to="/track">
-                  <Search className="mr-2 h-4 w-4" /> Search Again
-                </Link>
+                <Link to="/track"><Search className="mr-2 h-4 w-4" /> {t("common.searchAgain")}</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="min-w-[160px]">
                 <a href="https://wa.me/2340000000000" target="_blank" rel="noopener noreferrer">
-                  <MessageSquare className="mr-2 h-4 w-4" /> Contact Support
+                  <MessageSquare className="mr-2 h-4 w-4" /> {t("common.contactSupport")}
                 </a>
               </Button>
               <Button asChild variant="ghost" size="lg" className="min-w-[160px]">
                 <a href="mailto:support@prioritymailexpress.com">
-                  <Mail className="mr-2 h-4 w-4" /> Email Us
+                  <Mail className="mr-2 h-4 w-4" /> {t("common.emailUs")}
                 </a>
               </Button>
             </div>
@@ -151,22 +147,22 @@ function TrackDetail() {
               <div className="md:col-span-2">
                 <div className="rounded-xl border border-border bg-card p-6 shadow-card">
                   <div className="mb-4 flex items-center justify-between border-b border-border pb-4">
-                    <h3 className="text-display text-xl font-bold">Shipment Summary</h3>
+                    <h3 className="text-display text-xl font-bold">{t("track.shipmentSummary")}</h3>
                     <div className="flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success">
-                      <ShieldCheck className="h-4 w-4" /> Verified Shipment
+                      <ShieldCheck className="h-4 w-4" /> {t("track.verifiedShipment")}
                     </div>
                   </div>
 
                   <div className="grid gap-6 sm:grid-cols-2">
                     <PartyCard
-                      title="Sender"
+                      title={t("track.sender")}
                       name={data.shipment.sender_name}
                       phone={data.shipment.sender_phone}
                       loc={[data.shipment.sender_city, data.shipment.sender_country]}
                       address={data.shipment.sender_address}
                     />
                     <PartyCard
-                      title="Receiver"
+                      title={t("track.receiver")}
                       name={data.shipment.receiver_name}
                       phone={data.shipment.receiver_phone}
                       loc={[data.shipment.receiver_city, data.shipment.receiver_country]}
@@ -175,10 +171,10 @@ function TrackDetail() {
                   </div>
 
                   <div className="mt-8 grid gap-4 border-t border-border pt-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
-                    <Detail label="Origin" value={`${data.shipment.sender_city ?? ""}, ${data.shipment.sender_country ?? ""}`} />
-                    <Detail label="Destination" value={`${data.shipment.destination_city ?? ""}, ${data.shipment.destination_country ?? ""}`} />
-                    <Detail label="Service Type" value={data.shipment.delivery_type} />
-                    <Detail label="Package" value={data.shipment.package_description ?? "—"} />
+                    <Detail label={t("track.origin")} value={`${data.shipment.sender_city ?? ""}, ${data.shipment.sender_country ?? ""}`} />
+                    <Detail label={t("track.destination")} value={`${data.shipment.destination_city ?? ""}, ${data.shipment.destination_country ?? ""}`} />
+                    <Detail label={t("track.serviceType")} value={data.shipment.delivery_type} />
+                    <Detail label={t("track.package")} value={data.shipment.package_description ?? "—"} />
                   </div>
                 </div>
 
@@ -189,24 +185,23 @@ function TrackDetail() {
 
               <div className="space-y-6">
                 <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-                  <h3 className="mb-4 text-display text-lg font-semibold">Package Details</h3>
+                  <h3 className="mb-4 text-display text-lg font-semibold">{t("track.packageDetails")}</h3>
                   <div className="space-y-4">
-                    <Detail label="Contents" value={data.shipment.package_contents ?? "—"} />
-                    <Detail label="Quantity" value={String(data.shipment.quantity)} />
-                    <Detail label="Weight" value={`${data.shipment.weight_kg} kg`} />
+                    <Detail label={t("track.contents")} value={data.shipment.package_contents ?? "—"} />
+                    <Detail label={t("track.quantity")} value={String(data.shipment.quantity)} />
+                    <Detail label={t("track.weight")} value={`${data.shipment.weight_kg} kg`} />
                   </div>
                 </div>
 
-                {/* Proof of delivery */}
                 {data.delivery && (
                   <div className="rounded-xl border border-success/30 bg-success/5 p-6">
                     <div className="flex items-center gap-2 font-semibold text-success">
-                      <CheckCircle2 className="h-5 w-5" /> Delivered Successfully
+                      <CheckCircle2 className="h-5 w-5" /> {t("track.deliveredSuccessfully")}
                     </div>
                     <div className="mt-2 space-y-3 text-sm">
-                      <Detail label="Received by" value={data.delivery.receiver_name} />
-                      <Detail label="Date / time" value={formatDateTime(data.delivery.delivered_at)} />
-                      <Detail label="Delivered by" value={data.delivery.delivered_by_name ?? "—"} />
+                      <Detail label={t("track.receivedBy")} value={data.delivery.receiver_name} />
+                      <Detail label={t("track.dateTime")} value={formatDateTime(data.delivery.delivered_at)} />
+                      <Detail label={t("track.deliveredBy")} value={data.delivery.delivered_by_name ?? "—"} />
                     </div>
                     {data.delivery.photo_url && (
                       <img src={data.delivery.photo_url} alt="Proof of delivery" className="mt-4 max-h-64 rounded-lg border" />
