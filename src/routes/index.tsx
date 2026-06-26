@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Globe2, Zap, ShieldCheck, QrCode, FileCheck2, Headphones,
   Search, BadgeCheck, ArrowRight,
@@ -22,16 +23,17 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const features = [
-  { icon: Globe2, title: "International Delivery", desc: "Door-to-door coverage across 200+ countries with regional sortation hubs." },
-  { icon: Zap, title: "Express Courier Service", desc: "Time-definite next-day, 2-day, and same-week express options worldwide." },
-  { icon: ShieldCheck, title: "Secure Shipment Tracking", desc: "End-to-end visibility from registration to delivery with audit-grade events." },
-  { icon: QrCode, title: "QR Code Receipt Tracking", desc: "Every receipt embeds a unique QR linking customers straight to live tracking." },
-  { icon: FileCheck2, title: "Proof of Delivery", desc: "Receiver signature, photo, GPS, and timestamped delivery confirmation." },
-  { icon: Headphones, title: "Customer Support", desc: "24/7 multilingual support team for senders, receivers, and enterprise clients." },
-];
+const FEATURE_KEYS = [
+  { key: "international", icon: Globe2 },
+  { key: "express", icon: Zap },
+  { key: "secure", icon: ShieldCheck },
+  { key: "qr", icon: QrCode },
+  { key: "pod", icon: FileCheck2 },
+  { key: "support", icon: Headphones },
+] as const;
 
 function Landing() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
 
@@ -54,54 +56,46 @@ function Landing() {
       <div className="min-h-screen bg-background">
         <SiteHeader />
 
-        {/* Hero */}
         <section className="relative overflow-hidden bg-gradient-hero text-white">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
           <div className="container relative mx-auto grid gap-10 px-4 py-20 md:grid-cols-2 md:py-28">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em]">
-                <span className="h-1.5 w-1.5 rounded-full bg-pme-red" /> International Special Delivery
+                <span className="h-1.5 w-1.5 rounded-full bg-pme-red" /> {t("home.tagline")}
               </div>
-              <h1 className="text-display text-4xl font-bold leading-tight md:text-6xl">
-                Move the world,<br />one shipment at a time.
+              <h1 className="text-display text-4xl font-bold leading-tight md:text-6xl whitespace-pre-line">
+                {t("home.heroTitle")}
               </h1>
-              <p className="max-w-lg text-white/80 md:text-lg">
-                Priority Mail Express is your enterprise courier partner for international
-                express delivery, secure tracking, and QR-verified receipts.
-              </p>
+              <p className="max-w-lg text-white/80 md:text-lg">{t("home.heroSubtitle")}</p>
               <div className="flex flex-wrap gap-3">
                 <Button asChild size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-                  <Link to="/track">Track Shipment <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link to="/track">{t("home.trackCta")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-white hover:bg-white/15">
-                  <Link to="/verify">Verify Receipt</Link>
+                  <Link to="/verify">{t("home.verifyCta")}</Link>
                 </Button>
               </div>
             </div>
 
-            {/* Tracking box */}
             <div className="rounded-2xl border border-white/15 bg-white/10 p-6 shadow-elevated backdrop-blur md:p-8">
               <div className="mb-4 flex items-center gap-2 text-white">
                 <Search className="h-5 w-5 text-pme-red" />
-                <h2 className="text-display text-xl font-semibold">Track Your Shipment</h2>
+                <h2 className="text-display text-xl font-semibold">{t("home.trackBoxTitle")}</h2>
               </div>
-              <p className="mb-5 text-sm text-white/70">Enter your tracking number to see live shipment movement.</p>
+              <p className="mb-5 text-sm text-white/70">{t("home.trackBoxSubtitle")}</p>
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSearch("track");
-                }}
+                onSubmit={(e) => { e.preventDefault(); handleSearch("track"); }}
                 className="space-y-3"
               >
                 <Input
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  placeholder="PME-AWB-YYYYMMDD-000001"
+                  placeholder={t("home.trackingPlaceholder")}
                   className="h-12 border-white/20 bg-white text-foreground placeholder:text-muted-foreground"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <Button type="submit" size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-                    Track Shipment
+                    {t("home.trackCta")}
                   </Button>
                   <Button
                     type="button"
@@ -110,33 +104,29 @@ function Landing() {
                     variant="outline"
                     className="border-white/30 bg-transparent text-white hover:bg-white/10"
                   >
-                    <BadgeCheck className="mr-2 h-4 w-4" /> Verify Receipt
+                    <BadgeCheck className="mr-2 h-4 w-4" /> {t("home.verifyCta")}
                   </Button>
                 </div>
               </form>
-              <div className="mt-4 text-xs text-white/60">Tip: scan the QR code on your printed receipt with your phone camera.</div>
+              <div className="mt-4 text-xs text-white/60">{t("common.tip")}: {t("common.scanTip")}</div>
             </div>
           </div>
         </section>
 
-        {/* Features */}
         <section className="container mx-auto px-4 py-20">
           <div className="mb-12 text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">What we deliver</div>
-            <h2 className="mt-2 text-display text-3xl font-bold md:text-4xl">A complete logistics platform</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-              Built for couriers, branches, and customers — every shipment is registered,
-              tracked, and verified end-to-end.
-            </p>
+            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">{t("home.featuresEyebrow")}</div>
+            <h2 className="mt-2 text-display text-3xl font-bold md:text-4xl">{t("home.featuresTitle")}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{t("home.featuresSubtitle")}</p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="group rounded-xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-0.5 hover:shadow-elevated">
+            {FEATURE_KEYS.map(({ key, icon: Icon }) => (
+              <div key={key} className="group rounded-xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-0.5 hover:shadow-elevated">
                 <div className="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-navy text-navy-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-display text-lg font-semibold">{title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
+                <h3 className="text-display text-lg font-semibold">{t(`home.features.${key}.title`)}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{t(`home.features.${key}.desc`)}</p>
               </div>
             ))}
           </div>
@@ -147,3 +137,4 @@ function Landing() {
     </>
   );
 }
+
