@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/track/")({
 });
 
 function TrackSearch() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   return (
@@ -24,9 +26,9 @@ function TrackSearch() {
       <SiteHeader />
       <section className="container mx-auto max-w-2xl px-4 py-20">
         <div className="mb-8 text-center">
-          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">Tracking</div>
-          <h1 className="mt-2 text-display text-3xl font-bold md:text-4xl">Track your shipment</h1>
-          <p className="mt-2 text-muted-foreground">Enter your tracking number or scan the QR on your receipt.</p>
+          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">{t("nav.track")}</div>
+          <h1 className="mt-2 text-display text-3xl font-bold md:text-4xl">{t("track.title")}</h1>
+          <p className="mt-2 text-muted-foreground">{t("track.subtitle")}</p>
         </div>
         <form
           onSubmit={(e) => {
@@ -40,9 +42,9 @@ function TrackSearch() {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="PME-AWB-YYYYMMDD-000001" className="h-12 pl-9" />
           </div>
-          <Button type="submit" size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">Track</Button>
+          <Button type="submit" size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">{t("home.trackCta")}</Button>
         </form>
-        <p className="mt-4 text-center text-xs text-muted-foreground">Customers do not need to log in. Just enter your tracking number.</p>
+        <p className="mt-4 text-center text-xs text-muted-foreground">{t("common.customersNoLogin")}</p>
       </section>
       <SiteFooter />
     </div>

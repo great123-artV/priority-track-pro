@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "track": "تتبع الشحنة",
+    "verify": "التحقق من الإيصال",
+    "language": "اللغة",
+    "menu": "القائمة",
+    "close": "إغلاق"
+  },
+  "common": {
+    "search": "بحث",
+    "searchAgain": "بحث مرة أخرى",
+    "contactSupport": "اتصل بالدعم",
+    "emailUs": "راسلنا",
+    "loading": "جارٍ التحميل...",
+    "locating": "جارٍ تحديد موقع الشحنة...",
+    "notNow": "ليس الآن",
+    "dismiss": "إغلاق",
+    "install": "تثبيت التطبيق",
+    "downloadApp": "تحميل التطبيق",
+    "appInstalled": "التطبيق مثبت بالفعل",
+    "appInstallHintIOS": "للتثبيت: اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية.",
+    "appInstallHintOther": "افتح في Chrome أو Edge واستخدم القائمة تثبيت التطبيق.",
+    "tip": "نصيحة",
+    "scanTip": "امسح رمز QR الموجود على إيصالك المطبوع بكاميرا الهاتف.",
+    "customersNoLogin": "لا يحتاج العملاء إلى تسجيل الدخول. فقط أدخل رقم التتبع."
+  },
+  "home": {
+    "tagline": "التوصيل الدولي الخاص",
+    "heroTitle": "حرّك العالم،\nشحنة واحدة في كل مرة.",
+    "heroSubtitle": "Priority Mail Express شريكك المؤسسي لخدمات البريد السريع الدولي.",
+    "trackCta": "تتبع الشحنة",
+    "verifyCta": "التحقق من الإيصال",
+    "trackBoxTitle": "تتبع شحنتك",
+    "trackBoxSubtitle": "أدخل رقم التتبع لمشاهدة حركة الشحنة المباشرة.",
+    "trackingPlaceholder": "PME-AWB-YYYYMMDD-000001",
+    "featuresEyebrow": "ما نقدمه",
+    "featuresTitle": "منصة لوجستية متكاملة",
+    "featuresSubtitle": "مصممة لشركات الشحن والفروع والعملاء.",
+    "features": {
+      "international": {
+        "title": "التوصيل الدولي",
+        "desc": "تغطية من الباب إلى الباب في أكثر من 200 دولة."
+      },
+      "express": {
+        "title": "خدمة بريد سريع",
+        "desc": "خيارات سريعة في اليوم التالي وخلال يومين."
+      },
+      "secure": {
+        "title": "تتبع آمن",
+        "desc": "رؤية شاملة من التسجيل إلى التسليم."
+      },
+      "qr": {
+        "title": "إيصالات QR",
+        "desc": "كل إيصال يحتوي على رمز QR فريد."
+      },
+      "pod": {
+        "title": "إثبات التسليم",
+        "desc": "توقيع وصورة وموقع GPS وختم زمني."
+      },
+      "support": {
+        "title": "دعم العملاء",
+        "desc": "فريق دعم متعدد اللغات على مدار الساعة."
+      }
+    }
+  },
+  "track": {
+    "title": "تتبع شحنتك",
+    "subtitle": "أدخل رقم التتبع أو امسح رمز QR من إيصالك.",
+    "notFoundTitle": "الشحنة غير موجودة",
+    "notFoundMessage": "لم نتمكن من العثور على شحنة بهذا الرقم.",
+    "trackingNumber": "رقم التتبع",
+    "currentLocation": "الموقع الحالي",
+    "journeyProgress": "تقدم الرحلة",
+    "registered": "مُسجَّل",
+    "delivered": "تم التسليم",
+    "shipmentStatus": "حالة الشحنة",
+    "currentStatus": "الحالة الحالية",
+    "deliveryHealth": "حالة التسليم",
+    "lastUpdate": "آخر تحديث",
+    "expectedDelivery": "التسليم المتوقع",
+    "estimatedDelivery": "التسليم المُقدَّر",
+    "timeRemaining": "الوقت المتبقي",
+    "progress": "التقدم",
+    "verifiedShipment": "شحنة موثقة",
+    "shipmentSummary": "ملخص الشحنة",
+    "sender": "المرسل",
+    "receiver": "المستلم",
+    "origin": "المنشأ",
+    "destination": "الوجهة",
+    "serviceType": "نوع الخدمة",
+    "package": "الطرد",
+    "packageDetails": "تفاصيل الطرد",
+    "contents": "المحتويات",
+    "quantity": "الكمية",
+    "weight": "الوزن",
+    "deliveredSuccessfully": "تم التسليم بنجاح",
+    "receivedBy": "استلمها",
+    "dateTime": "التاريخ / الوقت",
+    "deliveredBy": "سلّمها",
+    "movementTimeline": "الجدول الزمني للحركة",
+    "noEventsYet": "لا توجد أحداث مسجلة بعد.",
+    "updatedBy": "حُدِّث بواسطة"
+  },
+  "verify": {
+    "title": "التحقق من إيصال",
+    "subtitle": "أدخل رقم الإيصال ورمز التحقق المكوّن من 6 أحرف.",
+    "receiptNumber": "رقم الإيصال",
+    "verificationCode": "رمز التحقق",
+    "codePlaceholder": "رمز من 6 أحرف (مثال A3K9PX)",
+    "verifyCta": "تحقق من الإيصال",
+    "authentic": "موثق وأصلي",
+    "invalidCode": "رمز التحقق غير صحيح",
+    "notFound": "الإيصال غير موجود"
+  },
+  "footer": {
+    "tagline": "تقدم Priority Mail Express خدمات بريد سريع ولوجستيات دولية آمنة.",
+    "services": "الخدمات",
+    "support": "الدعم",
+    "rights": "جميع الحقوق محفوظة.",
+    "serviceList": {
+      "international": "التوصيل الدولي",
+      "express": "بريد سريع",
+      "tracking": "تتبع آمن",
+      "qr": "إيصالات QR",
+      "pod": "إثبات التسليم"
+    }
+  },
+  "status": {
+    "shipment_registered": "تم تسجيل الشحنة",
+    "received_at_origin": "تم الاستلام في فرع المنشأ",
+    "processing_sorting": "قيد المعالجة في مركز الفرز",
+    "dispatched_origin": "تم الإرسال من مركز المنشأ",
+    "in_transit": "في الطريق",
+    "arrived_destination": "وصلت إلى مركز الوجهة",
+    "out_for_delivery": "خارجة للتسليم",
+    "delivered": "تم التسليم",
+    "delayed": "متأخرة",
+    "cancelled": "ملغاة"
+  },
+  "health": {
+    "on_schedule": "في الموعد",
+    "almost_due": "تقترب من الموعد",
+    "delayed": "متأخرة",
+    "scheduled": "مجدولة",
+    "delivered": "تم التسليم",
+    "cancelled": "ملغاة"
+  },
+  "install": {
+    "title": "حمّل تطبيق PME",
+    "subtitle": "ثبّت Priority Mail Express لتتبع أسرع.",
+    "subtitleIOS": "اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية للتثبيت."
+  },
+  "receipt": {
+    "title": "إيصال الشحن",
+    "trackingNumber": "رقم التتبع",
+    "receiptNumber": "رقم الإيصال",
+    "verificationCode": "رمز التحقق",
+    "issueDate": "تاريخ الإصدار",
+    "from": "من",
+    "shipTo": "إلى",
+    "service": "الخدمة",
+    "weight": "الوزن",
+    "pieces": "القطع",
+    "contents": "المحتويات",
+    "declaredValue": "القيمة المعلنة",
+    "charges": "الرسوم",
+    "total": "الإجمالي",
+    "scanToTrack": "امسح للتتبع",
+    "scanToVerify": "امسح للتحقق",
+    "downloadPdf": "تحميل PDF",
+    "downloadImage": "تحميل صورة",
+    "share": "مشاركة",
+    "print": "طباعة"
+  }
+}

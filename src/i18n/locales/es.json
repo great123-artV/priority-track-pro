@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "track": "Rastrear envío",
+    "verify": "Verificar recibo",
+    "language": "Idioma",
+    "menu": "Menú",
+    "close": "Cerrar"
+  },
+  "common": {
+    "search": "Buscar",
+    "searchAgain": "Buscar de nuevo",
+    "contactSupport": "Contactar soporte",
+    "emailUs": "Escríbenos",
+    "loading": "Cargando...",
+    "locating": "Localizando envío...",
+    "notNow": "Ahora no",
+    "dismiss": "Cerrar",
+    "install": "Instalar app",
+    "downloadApp": "Descargar app",
+    "appInstalled": "App ya instalada",
+    "appInstallHintIOS": "Para instalar: Compartir y luego Añadir a pantalla de inicio.",
+    "appInstallHintOther": "Abre en Chrome/Edge y usa el menú Instalar aplicación.",
+    "tip": "Consejo",
+    "scanTip": "Escanea el código QR del recibo impreso con la cámara.",
+    "customersNoLogin": "Los clientes no necesitan iniciar sesión."
+  },
+  "home": {
+    "tagline": "Entrega Especial Internacional",
+    "heroTitle": "Mueve el mundo,\nun envío a la vez.",
+    "heroSubtitle": "Priority Mail Express es tu socio de mensajería empresarial para entregas express internacionales.",
+    "trackCta": "Rastrear envío",
+    "verifyCta": "Verificar recibo",
+    "trackBoxTitle": "Rastrea tu envío",
+    "trackBoxSubtitle": "Introduce tu número de seguimiento.",
+    "trackingPlaceholder": "PME-AWB-AAAAMMDD-000001",
+    "featuresEyebrow": "Lo que entregamos",
+    "featuresTitle": "Una plataforma logística completa",
+    "featuresSubtitle": "Diseñada para mensajeros, sucursales y clientes.",
+    "features": {
+      "international": {
+        "title": "Entrega internacional",
+        "desc": "Cobertura puerta a puerta en más de 200 países."
+      },
+      "express": {
+        "title": "Mensajería exprés",
+        "desc": "Opciones exprés al día siguiente, 2 días y misma semana."
+      },
+      "secure": {
+        "title": "Seguimiento seguro",
+        "desc": "Visibilidad de extremo a extremo."
+      },
+      "qr": {
+        "title": "Recibos QR",
+        "desc": "Cada recibo incorpora un QR único."
+      },
+      "pod": {
+        "title": "Prueba de entrega",
+        "desc": "Firma, foto, GPS y marca de tiempo."
+      },
+      "support": {
+        "title": "Atención al cliente",
+        "desc": "Equipo multilingüe 24/7."
+      }
+    }
+  },
+  "track": {
+    "title": "Rastrea tu envío",
+    "subtitle": "Introduce tu número de seguimiento o escanea el QR.",
+    "notFoundTitle": "Envío no encontrado",
+    "notFoundMessage": "No pudimos localizar un envío con ese número.",
+    "trackingNumber": "Número de seguimiento",
+    "currentLocation": "Ubicación actual",
+    "journeyProgress": "Progreso del trayecto",
+    "registered": "Registrado",
+    "delivered": "Entregado",
+    "shipmentStatus": "Estado del envío",
+    "currentStatus": "Estado actual",
+    "deliveryHealth": "Estado de entrega",
+    "lastUpdate": "Última actualización",
+    "expectedDelivery": "Entrega prevista",
+    "estimatedDelivery": "Entrega estimada",
+    "timeRemaining": "Tiempo restante",
+    "progress": "Progreso",
+    "verifiedShipment": "Envío verificado",
+    "shipmentSummary": "Resumen del envío",
+    "sender": "Remitente",
+    "receiver": "Destinatario",
+    "origin": "Origen",
+    "destination": "Destino",
+    "serviceType": "Tipo de servicio",
+    "package": "Paquete",
+    "packageDetails": "Detalles del paquete",
+    "contents": "Contenido",
+    "quantity": "Cantidad",
+    "weight": "Peso",
+    "deliveredSuccessfully": "Entregado con éxito",
+    "receivedBy": "Recibido por",
+    "dateTime": "Fecha / hora",
+    "deliveredBy": "Entregado por",
+    "movementTimeline": "Cronología de movimientos",
+    "noEventsYet": "Sin eventos registrados.",
+    "updatedBy": "Actualizado por"
+  },
+  "verify": {
+    "title": "Verificar un recibo",
+    "subtitle": "Introduce el número de recibo y el código de verificación de 6 caracteres.",
+    "receiptNumber": "Número de recibo",
+    "verificationCode": "Código de verificación",
+    "codePlaceholder": "Código de 6 caracteres (ej. A3K9PX)",
+    "verifyCta": "Verificar recibo",
+    "authentic": "Autenticidad verificada",
+    "invalidCode": "Código de verificación inválido",
+    "notFound": "Recibo no encontrado"
+  },
+  "footer": {
+    "tagline": "Priority Mail Express ofrece servicios rápidos y seguros de mensajería internacional.",
+    "services": "Servicios",
+    "support": "Soporte",
+    "rights": "Todos los derechos reservados.",
+    "serviceList": {
+      "international": "Entrega internacional",
+      "express": "Mensajería exprés",
+      "tracking": "Seguimiento seguro",
+      "qr": "Recibos QR",
+      "pod": "Prueba de entrega"
+    }
+  },
+  "status": {
+    "shipment_registered": "Envío registrado",
+    "received_at_origin": "Recibido en sucursal de origen",
+    "processing_sorting": "Procesando en centro de clasificación",
+    "dispatched_origin": "Despachado del centro de origen",
+    "in_transit": "En tránsito",
+    "arrived_destination": "Llegado al centro de destino",
+    "out_for_delivery": "En reparto",
+    "delivered": "Entregado",
+    "delayed": "Retrasado",
+    "cancelled": "Cancelado"
+  },
+  "health": {
+    "on_schedule": "A tiempo",
+    "almost_due": "Casi vencido",
+    "delayed": "Retrasado",
+    "scheduled": "Programado",
+    "delivered": "Entregado",
+    "cancelled": "Cancelado"
+  },
+  "install": {
+    "title": "Descarga la app PME",
+    "subtitle": "Instala Priority Mail Express para un seguimiento más rápido.",
+    "subtitleIOS": "Toca Compartir y luego Añadir a pantalla de inicio."
+  },
+  "receipt": {
+    "title": "Recibo de envío",
+    "trackingNumber": "Número de seguimiento",
+    "receiptNumber": "Número de recibo",
+    "verificationCode": "Código de verificación",
+    "issueDate": "Fecha de emisión",
+    "from": "De",
+    "shipTo": "Destinatario",
+    "service": "Servicio",
+    "weight": "Peso",
+    "pieces": "Piezas",
+    "contents": "Contenido",
+    "declaredValue": "Valor declarado",
+    "charges": "Cargos",
+    "total": "Total",
+    "scanToTrack": "Escanear para rastrear",
+    "scanToVerify": "Escanear para verificar",
+    "downloadPdf": "Descargar PDF",
+    "downloadImage": "Descargar imagen",
+    "share": "Compartir",
+    "print": "Imprimir"
+  }
+}

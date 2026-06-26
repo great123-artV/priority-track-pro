@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BadgeCheck } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/verify/")({
 });
 
 function VerifySearch() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [receipt, setReceipt] = useState("");
   const [code, setCode] = useState("");
@@ -27,10 +29,8 @@ function VerifySearch() {
       <section className="container mx-auto max-w-2xl px-4 py-20">
         <div className="mb-8 text-center">
           <BadgeCheck className="mx-auto h-10 w-10 text-pme-red" />
-          <h1 className="mt-3 text-display text-3xl font-bold md:text-4xl">Verify a receipt</h1>
-          <p className="mt-2 text-muted-foreground">
-            Enter the receipt number and the 6-character verification code printed on your PME receipt.
-          </p>
+          <h1 className="mt-3 text-display text-3xl font-bold md:text-4xl">{t("verify.title")}</h1>
+          <p className="mt-2 text-muted-foreground">{t("verify.subtitle")}</p>
         </div>
         <form
           onSubmit={(e) => {
@@ -47,7 +47,7 @@ function VerifySearch() {
           className="space-y-3 rounded-xl border border-border bg-card p-4 shadow-card"
         >
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Receipt Number</label>
+            <label className="text-sm font-medium">{t("verify.receiptNumber")}</label>
             <Input
               value={receipt}
               onChange={(e) => setReceipt(e.target.value)}
@@ -56,17 +56,17 @@ function VerifySearch() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Verification Code</label>
+            <label className="text-sm font-medium">{t("verify.verificationCode")}</label>
             <Input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="6-character code (e.g. A3K9PX)"
+              placeholder={t("verify.codePlaceholder")}
               maxLength={6}
               className="h-12 font-mono tracking-[0.4em] uppercase"
             />
           </div>
           <Button type="submit" size="lg" className="w-full bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-            Verify Receipt
+            {t("verify.verifyCta")}
           </Button>
         </form>
       </section>

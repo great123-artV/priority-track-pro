@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "track": "配送追跡",
+    "verify": "領収書を確認",
+    "language": "言語",
+    "menu": "メニュー",
+    "close": "閉じる"
+  },
+  "common": {
+    "search": "検索",
+    "searchAgain": "再検索",
+    "contactSupport": "サポート連絡",
+    "emailUs": "メールで問い合わせ",
+    "loading": "読み込み中...",
+    "locating": "配送を検索中...",
+    "notNow": "後で",
+    "dismiss": "閉じる",
+    "install": "アプリをインストール",
+    "downloadApp": "アプリをダウンロード",
+    "appInstalled": "既にインストール済み",
+    "appInstallHintIOS": "インストール:共有→ホーム画面に追加。",
+    "appInstallHintOther": "Chrome/Edge で開きメニュー→アプリをインストール。",
+    "tip": "ヒント",
+    "scanTip": "印刷された領収書のQRコードをスマートフォンのカメラで読み取ってください。",
+    "customersNoLogin": "お客様はログイン不要です。追跡番号を入力するだけです。"
+  },
+  "home": {
+    "tagline": "国際特別配送",
+    "heroTitle": "世界を動かす、\n1つの荷物から。",
+    "heroSubtitle": "Priority Mail Express は国際特急配送、安全な追跡、QR検証済み領収書の企業向けクーリエパートナーです。",
+    "trackCta": "配送追跡",
+    "verifyCta": "領収書を確認",
+    "trackBoxTitle": "配送を追跡",
+    "trackBoxSubtitle": "追跡番号を入力してリアルタイムの動きを確認。",
+    "trackingPlaceholder": "PME-AWB-YYYYMMDD-000001",
+    "featuresEyebrow": "私たちが提供するもの",
+    "featuresTitle": "統合物流プラットフォーム",
+    "featuresSubtitle": "クーリエ、支店、顧客向けに設計。",
+    "features": {
+      "international": {
+        "title": "国際配送",
+        "desc": "200か国以上のドアツードア配送。"
+      },
+      "express": {
+        "title": "特急クーリエ",
+        "desc": "世界中で翌日・2日・週内特急。"
+      },
+      "secure": {
+        "title": "安全な追跡",
+        "desc": "登録から配送まで完全な可視性。"
+      },
+      "qr": {
+        "title": "QR領収書",
+        "desc": "各領収書に追跡用QRを内蔵。"
+      },
+      "pod": {
+        "title": "配送証明",
+        "desc": "署名、写真、GPS、タイムスタンプ。"
+      },
+      "support": {
+        "title": "カスタマーサポート",
+        "desc": "24時間多言語サポートチーム。"
+      }
+    }
+  },
+  "track": {
+    "title": "配送を追跡",
+    "subtitle": "追跡番号を入力するか領収書のQRを読み取ってください。",
+    "notFoundTitle": "配送が見つかりません",
+    "notFoundMessage": "入力された追跡番号の配送が見つかりませんでした。",
+    "trackingNumber": "追跡番号",
+    "currentLocation": "現在地",
+    "journeyProgress": "配送進捗",
+    "registered": "登録済",
+    "delivered": "配達済",
+    "shipmentStatus": "配送ステータス",
+    "currentStatus": "現在のステータス",
+    "deliveryHealth": "配送状況",
+    "lastUpdate": "最終更新",
+    "expectedDelivery": "予定配達",
+    "estimatedDelivery": "配達予定",
+    "timeRemaining": "残り時間",
+    "progress": "進捗",
+    "verifiedShipment": "検証済配送",
+    "shipmentSummary": "配送概要",
+    "sender": "差出人",
+    "receiver": "受取人",
+    "origin": "発送地",
+    "destination": "宛先",
+    "serviceType": "サービス種別",
+    "package": "荷物",
+    "packageDetails": "荷物詳細",
+    "contents": "内容",
+    "quantity": "数量",
+    "weight": "重量",
+    "deliveredSuccessfully": "配達完了",
+    "receivedBy": "受領者",
+    "dateTime": "日時",
+    "deliveredBy": "配達者",
+    "movementTimeline": "動きのタイムライン",
+    "noEventsYet": "記録されたイベントはまだありません。",
+    "updatedBy": "更新者"
+  },
+  "verify": {
+    "title": "領収書を確認",
+    "subtitle": "領収書番号とPME領収書に印刷された6桁の検証コードを入力。",
+    "receiptNumber": "領収書番号",
+    "verificationCode": "検証コード",
+    "codePlaceholder": "6文字コード (例 A3K9PX)",
+    "verifyCta": "領収書を確認",
+    "authentic": "正規確認済",
+    "invalidCode": "検証コードが無効",
+    "notFound": "領収書が見つかりません"
+  },
+  "footer": {
+    "tagline": "Priority Mail Express は迅速で安全な国際クーリエ・物流サービスです。",
+    "services": "サービス",
+    "support": "サポート",
+    "rights": "無断複製禁止。",
+    "serviceList": {
+      "international": "国際配送",
+      "express": "特急クーリエ",
+      "tracking": "安全な追跡",
+      "qr": "QR領収書",
+      "pod": "配送証明"
+    }
+  },
+  "status": {
+    "shipment_registered": "配送登録済",
+    "received_at_origin": "発送地支店で受領",
+    "processing_sorting": "仕分けセンターで処理中",
+    "dispatched_origin": "発送拠点から発送",
+    "in_transit": "輸送中",
+    "arrived_destination": "目的地拠点到着",
+    "out_for_delivery": "配達中",
+    "delivered": "配達済",
+    "delayed": "遅延",
+    "cancelled": "キャンセル"
+  },
+  "health": {
+    "on_schedule": "順調",
+    "almost_due": "まもなく期限",
+    "delayed": "遅延",
+    "scheduled": "予定済",
+    "delivered": "配達済",
+    "cancelled": "キャンセル"
+  },
+  "install": {
+    "title": "PMEアプリをダウンロード",
+    "subtitle": "より速い追跡のためにインストール。",
+    "subtitleIOS": "共有アイコン→ホーム画面に追加でインストール。"
+  },
+  "receipt": {
+    "title": "配送領収書",
+    "trackingNumber": "追跡番号",
+    "receiptNumber": "領収書番号",
+    "verificationCode": "検証コード",
+    "issueDate": "発行日",
+    "from": "差出人",
+    "shipTo": "宛先",
+    "service": "サービス",
+    "weight": "重量",
+    "pieces": "個数",
+    "contents": "内容",
+    "declaredValue": "申告価額",
+    "charges": "料金",
+    "total": "合計",
+    "scanToTrack": "スキャンして追跡",
+    "scanToVerify": "スキャンして検証",
+    "downloadPdf": "PDFダウンロード",
+    "downloadImage": "画像ダウンロード",
+    "share": "共有",
+    "print": "印刷"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "track": "Suivre l'envoi",
+    "verify": "Vérifier le reçu",
+    "language": "Langue",
+    "menu": "Menu",
+    "close": "Fermer"
+  },
+  "common": {
+    "search": "Rechercher",
+    "searchAgain": "Nouvelle recherche",
+    "contactSupport": "Contacter le support",
+    "emailUs": "Nous écrire",
+    "loading": "Chargement...",
+    "locating": "Localisation de l'envoi...",
+    "notNow": "Plus tard",
+    "dismiss": "Fermer",
+    "install": "Installer l'app",
+    "downloadApp": "Télécharger l'app",
+    "appInstalled": "Application déjà installée",
+    "appInstallHintIOS": "Pour installer : touchez Partager, puis Sur l'écran d'accueil.",
+    "appInstallHintOther": "Ouvrez dans Chrome/Edge et utilisez le menu Installer l'application.",
+    "tip": "Astuce",
+    "scanTip": "Scannez le QR code de votre reçu imprimé avec l'appareil photo.",
+    "customersNoLogin": "Pas besoin de se connecter. Saisissez simplement votre numéro de suivi."
+  },
+  "home": {
+    "tagline": "Livraison Spéciale Internationale",
+    "heroTitle": "Faites bouger le monde,\nun envoi à la fois.",
+    "heroSubtitle": "Priority Mail Express est votre partenaire pour la livraison express internationale, le suivi sécurisé et les reçus vérifiés par QR.",
+    "trackCta": "Suivre l'envoi",
+    "verifyCta": "Vérifier le reçu",
+    "trackBoxTitle": "Suivez votre envoi",
+    "trackBoxSubtitle": "Saisissez votre numéro de suivi pour voir le mouvement en direct.",
+    "trackingPlaceholder": "PME-AWB-AAAAMMJJ-000001",
+    "featuresEyebrow": "Ce que nous livrons",
+    "featuresTitle": "Une plateforme logistique complète",
+    "featuresSubtitle": "Conçue pour les coursiers, les agences et les clients — chaque envoi est enregistré, suivi et vérifié de bout en bout.",
+    "features": {
+      "international": {
+        "title": "Livraison internationale",
+        "desc": "Couverture porte-à-porte dans plus de 200 pays."
+      },
+      "express": {
+        "title": "Coursier express",
+        "desc": "Options express jour suivant, 2 jours et semaine."
+      },
+      "secure": {
+        "title": "Suivi sécurisé",
+        "desc": "Visibilité de bout en bout."
+      },
+      "qr": {
+        "title": "Reçus QR",
+        "desc": "Chaque reçu intègre un QR unique."
+      },
+      "pod": {
+        "title": "Preuve de livraison",
+        "desc": "Signature, photo, GPS et horodatage."
+      },
+      "support": {
+        "title": "Support client",
+        "desc": "Équipe multilingue 24/7."
+      }
+    }
+  },
+  "track": {
+    "title": "Suivez votre envoi",
+    "subtitle": "Saisissez votre numéro de suivi ou scannez le QR.",
+    "notFoundTitle": "Envoi introuvable",
+    "notFoundMessage": "Nous n'avons pas pu localiser un envoi avec ce numéro.",
+    "trackingNumber": "Numéro de suivi",
+    "currentLocation": "Localisation actuelle",
+    "journeyProgress": "Progression du trajet",
+    "registered": "Enregistré",
+    "delivered": "Livré",
+    "shipmentStatus": "Statut de l'envoi",
+    "currentStatus": "Statut actuel",
+    "deliveryHealth": "État de la livraison",
+    "lastUpdate": "Dernière mise à jour",
+    "expectedDelivery": "Livraison prévue",
+    "estimatedDelivery": "Livraison estimée",
+    "timeRemaining": "Temps restant",
+    "progress": "Progression",
+    "verifiedShipment": "Envoi vérifié",
+    "shipmentSummary": "Résumé de l'envoi",
+    "sender": "Expéditeur",
+    "receiver": "Destinataire",
+    "origin": "Origine",
+    "destination": "Destination",
+    "serviceType": "Type de service",
+    "package": "Colis",
+    "packageDetails": "Détails du colis",
+    "contents": "Contenu",
+    "quantity": "Quantité",
+    "weight": "Poids",
+    "deliveredSuccessfully": "Livré avec succès",
+    "receivedBy": "Reçu par",
+    "dateTime": "Date / heure",
+    "deliveredBy": "Livré par",
+    "movementTimeline": "Chronologie des mouvements",
+    "noEventsYet": "Aucun événement enregistré.",
+    "updatedBy": "Mis à jour par"
+  },
+  "verify": {
+    "title": "Vérifier un reçu",
+    "subtitle": "Saisissez le numéro de reçu et le code de vérification à 6 caractères.",
+    "receiptNumber": "Numéro de reçu",
+    "verificationCode": "Code de vérification",
+    "codePlaceholder": "Code à 6 caractères (ex. A3K9PX)",
+    "verifyCta": "Vérifier le reçu",
+    "authentic": "Authenticité vérifiée",
+    "invalidCode": "Code de vérification invalide",
+    "notFound": "Reçu introuvable"
+  },
+  "footer": {
+    "tagline": "Priority Mail Express offre des services rapides et sécurisés de coursier international avec un suivi vérifié par QR.",
+    "services": "Services",
+    "support": "Support",
+    "rights": "Tous droits réservés.",
+    "serviceList": {
+      "international": "Livraison internationale",
+      "express": "Coursier express",
+      "tracking": "Suivi sécurisé",
+      "qr": "Reçus QR",
+      "pod": "Preuve de livraison"
+    }
+  },
+  "status": {
+    "shipment_registered": "Expédition enregistrée",
+    "received_at_origin": "Reçu à l'agence d'origine",
+    "processing_sorting": "Traitement au centre de tri",
+    "dispatched_origin": "Expédié du hub d'origine",
+    "in_transit": "En transit",
+    "arrived_destination": "Arrivé au hub de destination",
+    "out_for_delivery": "En cours de livraison",
+    "delivered": "Livré",
+    "delayed": "Retardé",
+    "cancelled": "Annulé"
+  },
+  "health": {
+    "on_schedule": "À l'heure",
+    "almost_due": "Bientôt dû",
+    "delayed": "Retardé",
+    "scheduled": "Programmé",
+    "delivered": "Livré",
+    "cancelled": "Annulé"
+  },
+  "install": {
+    "title": "Téléchargez l'app PME",
+    "subtitle": "Installez Priority Mail Express pour un suivi plus rapide.",
+    "subtitleIOS": "Touchez Partager puis Sur l'écran d'accueil pour installer."
+  },
+  "receipt": {
+    "title": "Reçu d'expédition",
+    "trackingNumber": "Numéro de suivi",
+    "receiptNumber": "Numéro de reçu",
+    "verificationCode": "Code de vérification",
+    "issueDate": "Date d'émission",
+    "from": "De",
+    "shipTo": "Destinataire",
+    "service": "Service",
+    "weight": "Poids",
+    "pieces": "Pièces",
+    "contents": "Contenu",
+    "declaredValue": "Valeur déclarée",
+    "charges": "Frais",
+    "total": "Total",
+    "scanToTrack": "Scanner pour suivre",
+    "scanToVerify": "Scanner pour vérifier",
+    "downloadPdf": "Télécharger PDF",
+    "downloadImage": "Télécharger image",
+    "share": "Partager",
+    "print": "Imprimer"
+  }
+}

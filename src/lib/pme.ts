@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Database } from "@/integrations/supabase/types";
 
 export type ShipmentStatus = Database["public"]["Enums"]["shipment_status"];
@@ -43,6 +44,19 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   driver: "Driver / Rider",
   customer_support: "Customer Support",
 };
+
+// Hooks that return the *translated* labels using the active i18n language.
+// Use these in components; the static `STATUS_LABELS` constants remain for
+// non-React contexts (PDF generators, server-side, etc).
+export function useStatusLabel() {
+  const { t } = useTranslation();
+  return (s: ShipmentStatus) => t(`status.${s}`, { defaultValue: STATUS_LABELS[s] });
+}
+
+export function useHealthLabel() {
+  const { t } = useTranslation();
+  return (h: DeliveryHealth) => t(`health.${h}`, { defaultValue: h });
+}
 
 export function statusBadgeClass(status: ShipmentStatus): string {
   if (status === "delivered") return "bg-success/10 text-success border-success/20";
