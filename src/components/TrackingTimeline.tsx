@@ -1,5 +1,6 @@
 import { Check, Circle, Clock } from "lucide-react";
-import { STATUS_FLOW, STATUS_LABELS, formatDateTime, type ShipmentStatus } from "@/lib/pme";
+import { useTranslation } from "react-i18next";
+import { STATUS_FLOW, formatDateTime, useStatusLabel, type ShipmentStatus } from "@/lib/pme";
 
 export interface TimelineEvent {
   id: string;
@@ -17,6 +18,8 @@ export function TrackingTimeline({
   events: TimelineEvent[];
   currentStatus: ShipmentStatus;
 }) {
+  const { t } = useTranslation();
+  const statusLabel = useStatusLabel();
   const currentIdx = STATUS_FLOW.indexOf(currentStatus);
   const sortedEvents = [...events].sort(
     (a, b) => new Date(b.event_at).getTime() - new Date(a.event_at).getTime(),
@@ -24,7 +27,6 @@ export function TrackingTimeline({
 
   return (
     <div className="space-y-8">
-      {/* Stepper */}
       <div className="hidden md:block">
         <ol className="flex items-start justify-between">
           {STATUS_FLOW.map((s, i) => {
@@ -44,22 +46,18 @@ export function TrackingTimeline({
                   {done ? <Check className="h-4 w-4" /> : <Circle className="h-3 w-3 fill-current" />}
                 </div>
                 <div className={`text-[11px] leading-tight ${active ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
-                  {STATUS_LABELS[s]}
+                  {statusLabel(s)}
                 </div>
-                {i < STATUS_FLOW.length - 1 && (
-                  <div className="absolute" aria-hidden />
-                )}
               </li>
             );
           })}
         </ol>
       </div>
 
-      {/* Event log */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-        <h3 className="mb-4 text-display text-lg font-semibold">Movement Timeline</h3>
+        <h3 className="mb-4 text-display text-lg font-semibold">{t("track.movementTimeline")}</h3>
         {sortedEvents.length === 0 && (
-          <p className="text-sm text-muted-foreground">No events recorded yet.</p>
+          <p className="text-sm text-muted-foreground">{t("track.noEventsYet")}</p>
         )}
         <ol className="relative space-y-6 border-l border-border pl-6">
           {sortedEvents.map((e, idx) => (
@@ -70,12 +68,12 @@ export function TrackingTimeline({
                 <Clock className="h-3 w-3" />
               </span>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <div className="font-semibold text-foreground">{STATUS_LABELS[e.status]}</div>
+                <div className="font-semibold text-foreground">{statusLabel(e.status)}</div>
                 <div className="text-xs text-muted-foreground">{formatDateTime(e.event_at)}</div>
               </div>
               <div className="mt-1 text-sm text-muted-foreground">
                 {e.location && <span>{e.location}</span>}
-                {e.updated_by_name && <span> · Updated by {e.updated_by_name}</span>}
+                {e.updated_by_name && <span> · {t("track.updatedBy")} {e.updated_by_name}</span>}
               </div>
               {e.note && <div className="mt-1 text-sm">{e.note}</div>}
             </li>
