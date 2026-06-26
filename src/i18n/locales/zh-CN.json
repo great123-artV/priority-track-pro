@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "首页",
+    "track": "追踪货件",
+    "verify": "验证收据",
+    "language": "语言",
+    "menu": "菜单",
+    "close": "关闭"
+  },
+  "common": {
+    "search": "搜索",
+    "searchAgain": "重新搜索",
+    "contactSupport": "联系支持",
+    "emailUs": "发邮件",
+    "loading": "加载中...",
+    "locating": "正在定位货件...",
+    "notNow": "暂不",
+    "dismiss": "关闭",
+    "install": "安装应用",
+    "downloadApp": "下载应用",
+    "appInstalled": "应用已安装",
+    "appInstallHintIOS": "安装方法：点击分享，然后选择添加到主屏幕。",
+    "appInstallHintOther": "在 Chrome/Edge 中打开，使用菜单安装应用。",
+    "tip": "提示",
+    "scanTip": "用手机相机扫描打印收据上的二维码。",
+    "customersNoLogin": "客户无需登录，只需输入您的追踪号即可。"
+  },
+  "home": {
+    "tagline": "国际特快专递",
+    "heroTitle": "运送世界,\n一票一程。",
+    "heroSubtitle": "Priority Mail Express 是您的企业级国际快递合作伙伴。",
+    "trackCta": "追踪货件",
+    "verifyCta": "验证收据",
+    "trackBoxTitle": "追踪您的货件",
+    "trackBoxSubtitle": "输入追踪号查看实时动态。",
+    "trackingPlaceholder": "PME-AWB-YYYYMMDD-000001",
+    "featuresEyebrow": "我们提供",
+    "featuresTitle": "完整的物流平台",
+    "featuresSubtitle": "为快递员、分支机构和客户而设。",
+    "features": {
+      "international": {
+        "title": "国际派送",
+        "desc": "覆盖200多个国家。"
+      },
+      "express": {
+        "title": "快递服务",
+        "desc": "全球次日达、两日达和当周达。"
+      },
+      "secure": {
+        "title": "安全追踪",
+        "desc": "从注册到派送的全程可视化。"
+      },
+      "qr": {
+        "title": "二维码收据",
+        "desc": "每张收据嵌入唯一二维码。"
+      },
+      "pod": {
+        "title": "派送凭证",
+        "desc": "签名、照片、GPS 和时间戳。"
+      },
+      "support": {
+        "title": "客户支持",
+        "desc": "24/7 多语种支持团队。"
+      }
+    }
+  },
+  "track": {
+    "title": "追踪您的货件",
+    "subtitle": "输入追踪号或扫描收据上的二维码。",
+    "notFoundTitle": "未找到货件",
+    "notFoundMessage": "我们找不到您输入的追踪号对应的货件。",
+    "trackingNumber": "追踪号",
+    "currentLocation": "当前位置",
+    "journeyProgress": "行程进度",
+    "registered": "已注册",
+    "delivered": "已送达",
+    "shipmentStatus": "货件状态",
+    "currentStatus": "当前状态",
+    "deliveryHealth": "派送状况",
+    "lastUpdate": "最近更新",
+    "expectedDelivery": "预计派送",
+    "estimatedDelivery": "预计送达",
+    "timeRemaining": "剩余时间",
+    "progress": "进度",
+    "verifiedShipment": "已验证货件",
+    "shipmentSummary": "货件摘要",
+    "sender": "寄件人",
+    "receiver": "收件人",
+    "origin": "始发地",
+    "destination": "目的地",
+    "serviceType": "服务类型",
+    "package": "包裹",
+    "packageDetails": "包裹详情",
+    "contents": "内容",
+    "quantity": "数量",
+    "weight": "重量",
+    "deliveredSuccessfully": "成功送达",
+    "receivedBy": "接收人",
+    "dateTime": "日期/时间",
+    "deliveredBy": "派送员",
+    "movementTimeline": "动态时间轴",
+    "noEventsYet": "尚无记录事件。",
+    "updatedBy": "更新人"
+  },
+  "verify": {
+    "title": "验证收据",
+    "subtitle": "输入收据号和打印在 PME 收据上的6位验证码。",
+    "receiptNumber": "收据号",
+    "verificationCode": "验证码",
+    "codePlaceholder": "6位代码 (例如 A3K9PX)",
+    "verifyCta": "验证收据",
+    "authentic": "已验证为真",
+    "invalidCode": "验证码无效",
+    "notFound": "未找到收据"
+  },
+  "footer": {
+    "tagline": "Priority Mail Express 提供快速安全的国际快递和物流服务。",
+    "services": "服务",
+    "support": "支持",
+    "rights": "保留所有权利。",
+    "serviceList": {
+      "international": "国际派送",
+      "express": "快递服务",
+      "tracking": "安全追踪",
+      "qr": "二维码收据",
+      "pod": "派送凭证"
+    }
+  },
+  "status": {
+    "shipment_registered": "货件已注册",
+    "received_at_origin": "始发分行已收",
+    "processing_sorting": "分拣中心处理中",
+    "dispatched_origin": "始发枢纽发出",
+    "in_transit": "运输中",
+    "arrived_destination": "已抵达目的地枢纽",
+    "out_for_delivery": "派送中",
+    "delivered": "已送达",
+    "delayed": "延误",
+    "cancelled": "已取消"
+  },
+  "health": {
+    "on_schedule": "准时",
+    "almost_due": "即将到期",
+    "delayed": "延误",
+    "scheduled": "已排期",
+    "delivered": "已送达",
+    "cancelled": "已取消"
+  },
+  "install": {
+    "title": "下载 PME 应用",
+    "subtitle": "安装 Priority Mail Express 以更快追踪。",
+    "subtitleIOS": "点击分享，然后选择添加到主屏幕安装。"
+  },
+  "receipt": {
+    "title": "运输收据",
+    "trackingNumber": "追踪号",
+    "receiptNumber": "收据号",
+    "verificationCode": "验证码",
+    "issueDate": "开具日期",
+    "from": "寄自",
+    "shipTo": "寄至",
+    "service": "服务",
+    "weight": "重量",
+    "pieces": "件数",
+    "contents": "内容",
+    "declaredValue": "申报价值",
+    "charges": "费用",
+    "total": "总计",
+    "scanToTrack": "扫码追踪",
+    "scanToVerify": "扫码验证",
+    "downloadPdf": "下载 PDF",
+    "downloadImage": "下载图片",
+    "share": "分享",
+    "print": "打印"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "track": "Sendung verfolgen",
+    "verify": "Beleg prüfen",
+    "language": "Sprache",
+    "menu": "Menü",
+    "close": "Schließen"
+  },
+  "common": {
+    "search": "Suchen",
+    "searchAgain": "Erneut suchen",
+    "contactSupport": "Support kontaktieren",
+    "emailUs": "E-Mail an uns",
+    "loading": "Lädt...",
+    "locating": "Sendung wird gesucht...",
+    "notNow": "Nicht jetzt",
+    "dismiss": "Schließen",
+    "install": "App installieren",
+    "downloadApp": "App herunterladen",
+    "appInstalled": "App bereits installiert",
+    "appInstallHintIOS": "Teilen antippen, dann Zum Home-Bildschirm.",
+    "appInstallHintOther": "In Chrome/Edge oeffnen und im Menue App installieren.",
+    "tip": "Tipp",
+    "scanTip": "Scannen Sie den QR-Code auf Ihrem Beleg mit der Handykamera.",
+    "customersNoLogin": "Kunden muessen sich nicht anmelden. Einfach Sendungsnummer eingeben."
+  },
+  "home": {
+    "tagline": "Internationale Sonderlieferung",
+    "heroTitle": "Bewege die Welt,\neine Sendung nach der anderen.",
+    "heroSubtitle": "Priority Mail Express ist Ihr Kurierpartner fuer internationale Expresszustellung.",
+    "trackCta": "Sendung verfolgen",
+    "verifyCta": "Beleg pruefen",
+    "trackBoxTitle": "Verfolgen Sie Ihre Sendung",
+    "trackBoxSubtitle": "Geben Sie Ihre Sendungsnummer ein.",
+    "trackingPlaceholder": "PME-AWB-JJJJMMTT-000001",
+    "featuresEyebrow": "Was wir liefern",
+    "featuresTitle": "Eine vollstaendige Logistikplattform",
+    "featuresSubtitle": "Fuer Kuriere, Filialen und Kunden.",
+    "features": {
+      "international": {
+        "title": "Internationale Lieferung",
+        "desc": "Tuer-zu-Tuer-Versand in 200+ Laender."
+      },
+      "express": {
+        "title": "Express-Kurier",
+        "desc": "Termingenaue Express-Optionen weltweit."
+      },
+      "secure": {
+        "title": "Sichere Verfolgung",
+        "desc": "Lueckenlose Transparenz."
+      },
+      "qr": {
+        "title": "QR-Belege",
+        "desc": "Jeder Beleg hat einen QR zur Live-Verfolgung."
+      },
+      "pod": {
+        "title": "Zustellnachweis",
+        "desc": "Signatur, Foto, GPS, Zeitstempel."
+      },
+      "support": {
+        "title": "Kundensupport",
+        "desc": "24/7 mehrsprachiges Team."
+      }
+    }
+  },
+  "track": {
+    "title": "Sendung verfolgen",
+    "subtitle": "Sendungsnummer eingeben oder QR scannen.",
+    "notFoundTitle": "Sendung nicht gefunden",
+    "notFoundMessage": "Wir konnten keine Sendung mit dieser Nummer finden.",
+    "trackingNumber": "Sendungsnummer",
+    "currentLocation": "Aktueller Standort",
+    "journeyProgress": "Streckenfortschritt",
+    "registered": "Registriert",
+    "delivered": "Zugestellt",
+    "shipmentStatus": "Sendungsstatus",
+    "currentStatus": "Aktueller Status",
+    "deliveryHealth": "Lieferzustand",
+    "lastUpdate": "Letzte Aktualisierung",
+    "expectedDelivery": "Erwartete Lieferung",
+    "estimatedDelivery": "Voraussichtliche Lieferung",
+    "timeRemaining": "Verbleibende Zeit",
+    "progress": "Fortschritt",
+    "verifiedShipment": "Geprufte Sendung",
+    "shipmentSummary": "Sendungsuebersicht",
+    "sender": "Absender",
+    "receiver": "Empfaenger",
+    "origin": "Herkunft",
+    "destination": "Ziel",
+    "serviceType": "Servicetyp",
+    "package": "Paket",
+    "packageDetails": "Paketdetails",
+    "contents": "Inhalt",
+    "quantity": "Menge",
+    "weight": "Gewicht",
+    "deliveredSuccessfully": "Erfolgreich zugestellt",
+    "receivedBy": "Empfangen von",
+    "dateTime": "Datum / Uhrzeit",
+    "deliveredBy": "Zugestellt von",
+    "movementTimeline": "Bewegungschronik",
+    "noEventsYet": "Noch keine Ereignisse erfasst.",
+    "updatedBy": "Aktualisiert von"
+  },
+  "verify": {
+    "title": "Beleg verifizieren",
+    "subtitle": "Belegnummer und 6-stelligen Code eingeben.",
+    "receiptNumber": "Belegnummer",
+    "verificationCode": "Verifizierungscode",
+    "codePlaceholder": "6-stelliger Code (z. B. A3K9PX)",
+    "verifyCta": "Beleg pruefen",
+    "authentic": "Authentizitaet bestaetigt",
+    "invalidCode": "Ungueltiger Code",
+    "notFound": "Beleg nicht gefunden"
+  },
+  "footer": {
+    "tagline": "Priority Mail Express bietet schnelle, sichere internationale Kurierdienste.",
+    "services": "Dienste",
+    "support": "Support",
+    "rights": "Alle Rechte vorbehalten.",
+    "serviceList": {
+      "international": "Internationale Lieferung",
+      "express": "Express-Kurier",
+      "tracking": "Sichere Verfolgung",
+      "qr": "QR-Belege",
+      "pod": "Zustellnachweis"
+    }
+  },
+  "status": {
+    "shipment_registered": "Sendung registriert",
+    "received_at_origin": "Empfangen in Herkunftsfiliale",
+    "processing_sorting": "Wird im Sortierzentrum bearbeitet",
+    "dispatched_origin": "Vom Herkunftshub versandt",
+    "in_transit": "Unterwegs",
+    "arrived_destination": "Am Ziel-Hub angekommen",
+    "out_for_delivery": "In Zustellung",
+    "delivered": "Zugestellt",
+    "delayed": "Verzoegert",
+    "cancelled": "Storniert"
+  },
+  "health": {
+    "on_schedule": "Im Zeitplan",
+    "almost_due": "Bald faellig",
+    "delayed": "Verzoegert",
+    "scheduled": "Geplant",
+    "delivered": "Zugestellt",
+    "cancelled": "Storniert"
+  },
+  "install": {
+    "title": "PME-App herunterladen",
+    "subtitle": "Installieren Sie Priority Mail Express.",
+    "subtitleIOS": "Teilen antippen, dann Zum Home-Bildschirm."
+  },
+  "receipt": {
+    "title": "Versandbeleg",
+    "trackingNumber": "Sendungsnummer",
+    "receiptNumber": "Belegnummer",
+    "verificationCode": "Verifizierungscode",
+    "issueDate": "Ausstellungsdatum",
+    "from": "Von",
+    "shipTo": "An",
+    "service": "Service",
+    "weight": "Gewicht",
+    "pieces": "Stueck",
+    "contents": "Inhalt",
+    "declaredValue": "Deklarierter Wert",
+    "charges": "Gebuehren",
+    "total": "Gesamt",
+    "scanToTrack": "Scannen zum Verfolgen",
+    "scanToVerify": "Scannen zum Pruefen",
+    "downloadPdf": "PDF herunterladen",
+    "downloadImage": "Bild herunterladen",
+    "share": "Teilen",
+    "print": "Drucken"
+  }
+}
