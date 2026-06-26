@@ -45,6 +45,19 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   customer_support: "Customer Support",
 };
 
+// Hooks that return the *translated* labels using the active i18n language.
+// Use these in components; the static `STATUS_LABELS` constants remain for
+// non-React contexts (PDF generators, server-side, etc).
+export function useStatusLabel() {
+  const { t } = useTranslation();
+  return (s: ShipmentStatus) => t(`status.${s}`, { defaultValue: STATUS_LABELS[s] });
+}
+
+export function useHealthLabel() {
+  const { t } = useTranslation();
+  return (h: DeliveryHealth) => t(`health.${h}`, { defaultValue: h });
+}
+
 export function statusBadgeClass(status: ShipmentStatus): string {
   if (status === "delivered") return "bg-success/10 text-success border-success/20";
   if (status === "cancelled") return "bg-destructive/10 text-destructive border-destructive/20";
