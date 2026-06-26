@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download, X, Smartphone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 
 type BIPEvent = Event & {
@@ -14,7 +15,6 @@ function isStandalone() {
   if (typeof window === "undefined") return false;
   return (
     window.matchMedia?.("(display-mode: standalone)").matches ||
-    // iOS Safari
     (window.navigator as unknown as { standalone?: boolean }).standalone === true
   );
 }
@@ -31,12 +31,11 @@ function recentlyDismissed() {
     const ts = Number(v);
     if (!Number.isFinite(ts)) return false;
     return Date.now() - ts < DISMISS_DAYS * 24 * 60 * 60 * 1000;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 export function InstallAppPrompt() {
+  const { t } = useTranslation();
   const [deferred, setDeferred] = useState<BIPEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [iosHint, setIosHint] = useState(false);
@@ -61,16 +60,12 @@ export function InstallAppPrompt() {
     window.addEventListener("appinstalled", onInstalled);
 
     if (isIOS()) {
-      const t = window.setTimeout(() => {
-        setIosHint(true);
-        setVisible(true);
-      }, 2500);
+      const tm = window.setTimeout(() => { setIosHint(true); setVisible(true); }, 2500);
       return () => {
         window.removeEventListener("beforeinstallprompt", onBIP);
-        window.clearTimeout(t);
+        window.clearTimeout(tm);
       };
     }
-
     return () => window.removeEventListener("beforeinstallprompt", onBIP);
   }, []);
 
@@ -98,25 +93,23 @@ export function InstallAppPrompt() {
             <Smartphone className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-semibold">Download the PME app</div>
+            <div className="text-sm font-semibold">{t("install.title")}</div>
             <p className="mt-0.5 text-xs text-white/75">
-              {iosHint && !deferred
-                ? "Tap the Share icon, then \"Add to Home Screen\" to install."
-                : "Install Priority Mail Express for faster tracking and one-tap access."}
+              {iosHint && !deferred ? t("install.subtitleIOS") : t("install.subtitle")}
             </p>
             <div className="mt-3 flex items-center gap-2">
               {deferred ? (
                 <Button size="sm" onClick={install} className="h-8 bg-pme-red hover:bg-pme-red/90 text-white">
-                  <Download className="mr-1.5 h-3.5 w-3.5" /> Install app
+                  <Download className="mr-1.5 h-3.5 w-3.5" /> {t("common.install")}
                 </Button>
               ) : null}
               <Button size="sm" variant="ghost" onClick={dismiss} className="h-8 text-white/80 hover:bg-white/10 hover:text-white">
-                Not now
+                {t("common.notNow")}
               </Button>
             </div>
           </div>
           <button
-            aria-label="Dismiss install prompt"
+            aria-label={t("common.dismiss")}
             onClick={dismiss}
             className="rounded-md p-1 text-white/60 hover:bg-white/10 hover:text-white"
           >
