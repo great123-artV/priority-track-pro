@@ -301,10 +301,11 @@ function ProgressHero(props: {
   destCountry?: string | null;
   contents?: string | null;
 }) {
+  const { t } = useTranslation();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
+    const tm = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(tm);
   }, []);
   const p = computeShipmentProgress({
     departure_date: props.departure,
@@ -320,11 +321,11 @@ function ProgressHero(props: {
 
       <div className="relative mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">Tracking Number</div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">{t("track.trackingNumber")}</div>
           <div className="text-display text-2xl font-bold md:text-3xl">{props.tracking}</div>
         </div>
         <div className="text-right text-sm">
-          <div className="text-white/60">Current Location</div>
+          <div className="text-white/60">{t("track.currentLocation")}</div>
           <div className="flex items-center justify-end gap-1 font-semibold">
             <MapPin className="h-4 w-4 text-pme-red" />
             {props.location ?? "—"}
@@ -343,12 +344,11 @@ function ProgressHero(props: {
         />
       </div>
 
-      {/* Progress */}
       <div className="relative mt-8">
         <div className="flex justify-between text-xs text-white/70">
-          <span>Registered</span>
-          <span className="font-semibold text-white">Journey Progress</span>
-          <span>Delivered</span>
+          <span>{t("track.registered")}</span>
+          <span className="font-semibold text-white">{t("track.journeyProgress")}</span>
+          <span>{t("track.delivered")}</span>
         </div>
         <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/10">
           <div
