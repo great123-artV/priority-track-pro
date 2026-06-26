@@ -230,10 +230,13 @@ function StatusCard(props: {
   deliveredAt: string | null;
   updatedAt: string | null;
 }) {
+  const { t } = useTranslation();
+  const statusLabel = useStatusLabel();
+  const healthLabel = useHealthLabel();
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
+    const tm = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(tm);
   }, []);
 
   const p = computeShipmentProgress({
@@ -246,35 +249,35 @@ function StatusCard(props: {
 
   return (
     <div className="h-full rounded-xl border border-border bg-card p-6 shadow-card">
-      <h3 className="mb-4 text-display text-lg font-semibold">Shipment Status</h3>
+      <h3 className="mb-4 text-display text-lg font-semibold">{t("track.shipmentStatus")}</h3>
       <div className="space-y-6">
         <Detail
-          label="Current Status"
+          label={t("track.currentStatus")}
           value={
             <span className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(props.status)}`}>
-              {STATUS_LABELS[props.status]}
+              {statusLabel(props.status)}
             </span>
           }
         />
         <Detail
-          label="Delivery Health"
+          label={t("track.deliveryHealth")}
           value={
             <span className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${healthBadgeClass(p.health)}`}>
-              <ShieldCheck className="h-3 w-3" /> {p.healthLabel}
+              <ShieldCheck className="h-3 w-3" /> {healthLabel(p.health)}
             </span>
           }
         />
-        <Detail label="Last Update" value={formatDateTime(props.updatedAt)} />
-        <Detail label="Expected Delivery" value={formatDate(props.expected)} />
+        <Detail label={t("track.lastUpdate")} value={formatDateTime(props.updatedAt)} />
+        <Detail label={t("track.expectedDelivery")} value={formatDate(props.expected)} />
 
         <div className="border-t border-border pt-4">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Time Remaining</div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{t("track.timeRemaining")}</div>
           <div className="mt-1 font-bold text-foreground">{p.countdownLabel}</div>
         </div>
 
         <div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Progress</span>
+            <span>{t("track.progress")}</span>
             <span className="font-semibold text-foreground">{p.progressPct}%</span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
