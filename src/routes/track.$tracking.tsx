@@ -1,14 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 import { ShipmentMap } from "@/components/ShipmentMap";
 import {
-  STATUS_LABELS, statusBadgeClass, formatDate, formatDateTime,
-  computeShipmentProgress, healthBadgeClass,
+  statusBadgeClass, formatDate, formatDateTime,
+  computeShipmentProgress, healthBadgeClass, useStatusLabel, useHealthLabel,
 } from "@/lib/pme";
 import { AlertTriangle, MapPin, CheckCircle2, Clock, ShieldCheck, Search, MessageSquare, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
