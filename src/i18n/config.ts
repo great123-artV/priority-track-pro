@@ -7,9 +7,32 @@ import { initReactI18next } from "react-i18next";
 import en from "./locales/en.json";
 
 export type LanguageCode =
-  | "en" | "fr" | "es" | "pt" | "de" | "it" | "nl" | "ru" | "uk" | "tr"
-  | "ar" | "zh-CN" | "zh-TW" | "ja" | "ko" | "hi" | "ur" | "bn"
-  | "ms" | "id" | "th" | "vi" | "sw" | "yo" | "ig" | "ha";
+  | "en"
+  | "fr"
+  | "es"
+  | "pt"
+  | "de"
+  | "it"
+  | "nl"
+  | "ru"
+  | "uk"
+  | "tr"
+  | "ar"
+  | "zh-CN"
+  | "zh-TW"
+  | "ja"
+  | "ko"
+  | "hi"
+  | "ur"
+  | "bn"
+  | "ms"
+  | "id"
+  | "th"
+  | "vi"
+  | "sw"
+  | "yo"
+  | "ig"
+  | "ha";
 
 export interface LanguageMeta {
   code: LanguageCode;
@@ -135,7 +158,11 @@ export function initI18n() {
 
   i18n.on("languageChanged", (lng) => {
     applyDirection(lng);
-    try { localStorage.setItem(STORAGE_KEY, lng); } catch { /* noop */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, lng);
+    } catch {
+      /* noop */
+    }
   });
 
   return i18n;

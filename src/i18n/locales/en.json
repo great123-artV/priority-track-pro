@@ -38,12 +38,30 @@
     "featuresTitle": "A complete logistics platform",
     "featuresSubtitle": "Built for couriers, branches, and customers — every shipment is registered, tracked, and verified end-to-end.",
     "features": {
-      "international": { "title": "International Delivery", "desc": "Door-to-door coverage across 200+ countries with regional sortation hubs." },
-      "express": { "title": "Express Courier Service", "desc": "Time-definite next-day, 2-day, and same-week express options worldwide." },
-      "secure": { "title": "Secure Shipment Tracking", "desc": "End-to-end visibility from registration to delivery with audit-grade events." },
-      "qr": { "title": "QR Code Receipt Tracking", "desc": "Every receipt embeds a unique QR linking customers straight to live tracking." },
-      "pod": { "title": "Proof of Delivery", "desc": "Receiver signature, photo, GPS, and timestamped delivery confirmation." },
-      "support": { "title": "Customer Support", "desc": "24/7 multilingual support team for senders, receivers, and enterprise clients." }
+      "international": {
+        "title": "International Delivery",
+        "desc": "Door-to-door coverage across 200+ countries with regional sortation hubs."
+      },
+      "express": {
+        "title": "Express Courier Service",
+        "desc": "Time-definite next-day, 2-day, and same-week express options worldwide."
+      },
+      "secure": {
+        "title": "Secure Shipment Tracking",
+        "desc": "End-to-end visibility from registration to delivery with audit-grade events."
+      },
+      "qr": {
+        "title": "QR Code Receipt Tracking",
+        "desc": "Every receipt embeds a unique QR linking customers straight to live tracking."
+      },
+      "pod": {
+        "title": "Proof of Delivery",
+        "desc": "Receiver signature, photo, GPS, and timestamped delivery confirmation."
+      },
+      "support": {
+        "title": "Customer Support",
+        "desc": "24/7 multilingual support team for senders, receivers, and enterprise clients."
+      }
     }
   },
   "track": {
@@ -158,7 +176,7 @@
   "ai": {
     "greeting": "Hello 👋",
     "welcome": "Welcome to Priority Mail Express.",
-    "intro": "I'm Priority AI, your virtual logistics assistant.",
+    "intro": "I'm Jules AI, your virtual logistics assistant.",
     "canHelp": "I can help you:",
     "helpItems": {
       "track": "Track your shipment",
@@ -168,7 +186,7 @@
       "support": "Connect you with customer support"
     },
     "ask": "How may I assist you today?",
-    "inputPlaceholder": "Ask Priority AI...",
+    "inputPlaceholder": "Ask Jules AI...",
     "actions": {
       "track": "Track My Shipment",
       "services": "Shipping Services",

@@ -13,10 +13,6 @@ export default defineConfig({
     server: { entry: "server" },
   },
   nitro: {
-    preset: process.env.NETLIFY
-      ? "netlify"
-      : process.env.CF_PAGES
-      ? "cloudflare-pages"
-      : "vercel",
+    preset: process.env.NETLIFY ? "netlify" : process.env.CF_PAGES ? "cloudflare-pages" : "vercel",
   },
 });

@@ -19,21 +19,19 @@ export const chatWithAI = createServerFn({ method: "POST" })
   .handler(async ({ data: { message, history, language, currentPage } }) => {
     const apiKey = process.env.OPENAI_API_KEY;
 
-    if (!apiKey) {
-      console.error("OPENAI_API_KEY is not set");
-      return {
-        text: "I'm sorry, but my AI services are currently unavailable. Please contact support directly.",
-        error: "Missing API Key",
-      };
-    }
-
     try {
       // 1. Fetch relevant Knowledge Base entries
-      const { data: kb } = await supabaseAdmin
-        .from("ai_knowledge_base")
-        .select("title, content")
-        .eq("is_active", true)
-        .or(`language.eq.${language},language.eq.en`);
+      let kb = null;
+      try {
+        const { data } = await supabaseAdmin
+          .from("ai_knowledge_base")
+          .select("title, content")
+          .eq("is_active", true)
+          .or(`language.eq.${language},language.eq.en`);
+        kb = data;
+      } catch (e) {
+        console.warn("Failed to fetch KB from Supabase:", e);
+      }
 
       // 2. Detect Tracking Number pattern
       const trackingMatch = message.match(/PME-AWB-\d{8}-\d{6}/i);
@@ -41,25 +39,26 @@ export const chatWithAI = createServerFn({ method: "POST" })
 
       if (trackingMatch) {
         const trackingNumber = trackingMatch[0].toUpperCase();
-        const { data: shipment } = await supabaseAdmin
-          .from("shipments")
-          .select("*")
-          .eq("tracking_number", trackingNumber)
-          .maybeSingle();
+        try {
+          const { data: shipment } = await supabaseAdmin
+            .from("shipments")
+            .select("*")
+            .eq("tracking_number", trackingNumber)
+            .maybeSingle();
 
-        if (shipment) {
-          const [{ data: events }, { data: delivery }] = await Promise.all([
-            supabaseAdmin
-              .from("shipment_events")
-              .select("*")
-              .eq("shipment_id", shipment.id)
-              .order("event_at", { ascending: false }),
-            supabaseAdmin
-              .from("delivery_confirmations")
-              .select("*")
-              .eq("shipment_id", shipment.id)
-              .maybeSingle(),
-          ]);
+          if (shipment) {
+            const [{ data: events }, { data: delivery }] = await Promise.all([
+              supabaseAdmin
+                .from("shipment_events")
+                .select("*")
+                .eq("shipment_id", shipment.id)
+                .order("event_at", { ascending: false }),
+              supabaseAdmin
+                .from("delivery_confirmations")
+                .select("*")
+                .eq("shipment_id", shipment.id)
+                .maybeSingle(),
+            ]);
 
           const progress = computeShipmentProgress({
             departure_date: shipment.departure_date,
@@ -68,23 +67,27 @@ export const chatWithAI = createServerFn({ method: "POST" })
             delivered_at: delivery?.delivered_at,
           });
 
-          shipmentData = {
-            tracking_number: shipment.tracking_number,
-            current_status: STATUS_LABELS[shipment.current_status] || shipment.current_status,
-            origin: `${shipment.sender_city || ""}, ${shipment.sender_country || ""}`,
-            destination: `${shipment.destination_city || ""}, ${shipment.destination_country || ""}`,
-            expected_delivery: shipment.expected_arrival_date,
-            delivery_health: progress.healthLabel,
-            latest_movement: events && events.length > 0
-              ? `${events[0].location || "In Transit"}: ${events[0].note || ""}`
-              : "Registered",
-            time_remaining: progress.countdownLabel,
-          };
+            shipmentData = {
+              tracking_number: shipment.tracking_number,
+              current_status: STATUS_LABELS[shipment.current_status] || shipment.current_status,
+              origin: `${shipment.sender_city || ""}, ${shipment.sender_country || ""}`,
+              destination: `${shipment.destination_city || ""}, ${shipment.destination_country || ""}`,
+              expected_delivery: shipment.expected_arrival_date,
+              delivery_health: progress.healthLabel,
+              latest_movement:
+                events && events.length > 0
+                  ? `${events[0].location || "In Transit"}: ${events[0].note || ""}`
+                  : "Registered",
+              time_remaining: progress.countdownLabel,
+            };
+          }
+        } catch (e) {
+          console.warn("Failed to fetch shipment from Supabase:", e);
         }
       }
 
       const systemPrompt = `
-You are "Priority AI", the professional virtual logistics assistant for Priority Mail Express (PME).
+You are "Jules AI", the professional virtual logistics assistant for Priority Mail Express (PME).
 Your personality: Professional, Friendly, Patient, Helpful, Reliable, Fast, Knowledgeable.
 You represent an international logistics company.
 
@@ -113,50 +116,107 @@ SUPPORT CHANNELS:
 - Live Support: Live Support Coming Soon
 `;
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
-            { role: "user", content: message },
-          ],
-          temperature: 0.7,
-        }),
-      });
+      let assistantMessage = "";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || "OpenAI API error");
+      if (!apiKey) {
+        console.warn("OPENAI_API_KEY is not set, using rule-based fallback.");
+
+        // Rule-based fallback logic
+        if (shipmentData) {
+          assistantMessage =
+            `I found shipment ${shipmentData.tracking_number}. It is currently "${shipmentData.current_status}".\n\n` +
+            `Origin: ${shipmentData.origin}\n` +
+            `Destination: ${shipmentData.destination}\n` +
+            `Expected Delivery: ${shipmentData.expected_delivery || "TBD"}\n` +
+            `Latest Movement: ${shipmentData.latest_movement}\n` +
+            `Status: ${shipmentData.delivery_health} (${shipmentData.time_remaining})`;
+        } else {
+          // Keyword matching against Knowledge Base
+          const lowerMsg = message.toLowerCase();
+          const relevantKb = kb?.find(
+            (item) =>
+              item.title
+                .toLowerCase()
+                .split(" ")
+                .some((word) => word.length > 3 && lowerMsg.includes(word)) ||
+              item.content
+                .toLowerCase()
+                .split(" ")
+                .some((word) => word.length > 4 && lowerMsg.includes(word)),
+          );
+
+          if (relevantKb) {
+            assistantMessage = relevantKb.content;
+          } else if (
+            lowerMsg.includes("track") ||
+            lowerMsg.includes("where") ||
+            lowerMsg.includes("status")
+          ) {
+            assistantMessage =
+              "To track your shipment, please provide your tracking number (e.g., PME-AWB-20260622-000003).";
+          } else if (
+            lowerMsg.includes("price") ||
+            lowerMsg.includes("cost") ||
+            lowerMsg.includes("how much")
+          ) {
+            assistantMessage =
+              "Pricing depends on destination, weight, and service type. Please visit our pricing page or contact support for a quote.";
+          } else {
+            assistantMessage =
+              "I am Jules AI, your virtual logistics assistant. I can help you track shipments, explain our services, or connect you with support. How can I help you today?";
+          }
+        }
+      } else {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [
+              { role: "system", content: systemPrompt },
+              ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
+              { role: "user", content: message },
+            ],
+            temperature: 0.7,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "OpenAI API error");
+        }
+
+        const aiData = await response.json();
+        assistantMessage = aiData.choices[0].message.content;
       }
 
-      const aiData = await response.json();
-      const assistantMessage = aiData.choices[0].message.content;
-
-      await supabaseAdmin.from("ai_interactions").insert({
-        user_message: message,
-        assistant_response_summary: assistantMessage.substring(0, 1000),
-        detected_language: language,
-        current_page: currentPage,
-        was_tracking_request: !!trackingMatch,
-        tracking_number_if_provided: trackingMatch ? trackingMatch[0].toUpperCase() : null,
-      });
+      try {
+        await supabaseAdmin.from("ai_interactions").insert({
+          user_message: message,
+          assistant_response_summary: assistantMessage.substring(0, 1000),
+          detected_language: language,
+          current_page: currentPage,
+          was_tracking_request: !!trackingMatch,
+          tracking_number_if_provided: trackingMatch ? trackingMatch[0].toUpperCase() : null,
+        });
+      } catch (e) {
+        console.warn("Failed to log interaction to Supabase:", e);
+      }
 
       return {
         text: assistantMessage,
         trackingFound: !!shipmentData,
         trackingNumber: shipmentData?.tracking_number,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("AI Error:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         text: "I encountered an error while processing your request. Please try again or contact support.",
-        error: error.message,
+        error: errorMessage,
       };
     }
   });
