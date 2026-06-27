@@ -63,7 +63,7 @@ export function ShipmentMap({
     }
 
     const x = isOrigin ? 10 + (Math.abs(hash) % 30) : 60 + (Math.abs(hash) % 30);
-    const y = 20 + (Math.abs(hash % 60));
+    const y = 20 + Math.abs(hash % 60);
     return { x, y };
   };
 
@@ -79,11 +79,7 @@ export function ShipmentMap({
 
   return (
     <div className="relative h-64 w-full overflow-hidden rounded-xl border border-white/10 bg-navy/50 backdrop-blur-sm">
-      <svg
-        viewBox="0 0 100 100"
-        className="h-full w-full opacity-20"
-        preserveAspectRatio="none"
-      >
+      <svg viewBox="0 0 100 100" className="h-full w-full opacity-20" preserveAspectRatio="none">
         {/* Simple stylized world map grid/dots */}
         <defs>
           <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -226,9 +222,7 @@ export function ShipmentMap({
             Live Journey Status
           </span>
         </div>
-        <div className="text-[10px] font-bold text-white">
-          {progress}% Complete
-        </div>
+        <div className="text-[10px] font-bold text-white">{progress}% Complete</div>
       </div>
     </div>
   );

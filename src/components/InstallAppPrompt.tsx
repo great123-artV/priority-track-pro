@@ -31,7 +31,9 @@ function recentlyDismissed() {
     const ts = Number(v);
     if (!Number.isFinite(ts)) return false;
     return Date.now() - ts < DISMISS_DAYS * 24 * 60 * 60 * 1000;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 export function InstallAppPrompt() {
@@ -60,7 +62,10 @@ export function InstallAppPrompt() {
     window.addEventListener("appinstalled", onInstalled);
 
     if (isIOS()) {
-      const tm = window.setTimeout(() => { setIosHint(true); setVisible(true); }, 2500);
+      const tm = window.setTimeout(() => {
+        setIosHint(true);
+        setVisible(true);
+      }, 2500);
       return () => {
         window.removeEventListener("beforeinstallprompt", onBIP);
         window.clearTimeout(tm);
@@ -72,7 +77,11 @@ export function InstallAppPrompt() {
   if (!visible) return null;
 
   const dismiss = () => {
-    try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch { /* noop */ }
+    try {
+      localStorage.setItem(DISMISS_KEY, String(Date.now()));
+    } catch {
+      /* noop */
+    }
     setVisible(false);
   };
 
@@ -99,11 +108,20 @@ export function InstallAppPrompt() {
             </p>
             <div className="mt-3 flex items-center gap-2">
               {deferred ? (
-                <Button size="sm" onClick={install} className="h-8 bg-pme-red hover:bg-pme-red/90 text-white">
+                <Button
+                  size="sm"
+                  onClick={install}
+                  className="h-8 bg-pme-red hover:bg-pme-red/90 text-white"
+                >
                   <Download className="mr-1.5 h-3.5 w-3.5" /> {t("common.install")}
                 </Button>
               ) : null}
-              <Button size="sm" variant="ghost" onClick={dismiss} className="h-8 text-white/80 hover:bg-white/10 hover:text-white">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={dismiss}
+                className="h-8 text-white/80 hover:bg-white/10 hover:text-white"
+              >
                 {t("common.notNow")}
               </Button>
             </div>

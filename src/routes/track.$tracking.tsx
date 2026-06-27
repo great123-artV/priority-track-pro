@@ -8,10 +8,24 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 import { ShipmentMap } from "@/components/ShipmentMap";
 import {
-  statusBadgeClass, formatDate, formatDateTime,
-  computeShipmentProgress, healthBadgeClass, useStatusLabel, useHealthLabel,
+  statusBadgeClass,
+  formatDate,
+  formatDateTime,
+  computeShipmentProgress,
+  healthBadgeClass,
+  useStatusLabel,
+  useHealthLabel,
 } from "@/lib/pme";
-import { AlertTriangle, MapPin, CheckCircle2, Clock, ShieldCheck, Search, MessageSquare, Mail } from "lucide-react";
+import {
+  AlertTriangle,
+  MapPin,
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  Search,
+  MessageSquare,
+  Mail,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const TRACKING_REGEX = /^PME-AWB-\d{8}-\d{6}$/i;
@@ -21,7 +35,10 @@ export const Route = createFileRoute("/track/$tracking")({
   head: ({ params }) => ({
     meta: [
       { title: `Tracking ${params.tracking} — Priority Mail Express` },
-      { name: "description", content: `Live tracking and movement timeline for shipment ${params.tracking}.` },
+      {
+        name: "description",
+        content: `Live tracking and movement timeline for shipment ${params.tracking}.`,
+      },
     ],
   }),
   component: TrackDetail,
@@ -93,11 +110,15 @@ function TrackDetail() {
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10">
               <AlertTriangle className="h-10 w-10 text-destructive" />
             </div>
-            <h1 className="text-display text-3xl font-bold text-foreground">{t("track.notFoundTitle")}</h1>
+            <h1 className="text-display text-3xl font-bold text-foreground">
+              {t("track.notFoundTitle")}
+            </h1>
             <p className="mt-4 text-lg text-muted-foreground">{t("track.notFoundMessage")}</p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg" className="min-w-[160px] bg-pme-red hover:bg-pme-red/90">
-                <Link to="/track"><Search className="mr-2 h-4 w-4" /> {t("common.searchAgain")}</Link>
+                <Link to="/track">
+                  <Search className="mr-2 h-4 w-4" /> {t("common.searchAgain")}
+                </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="min-w-[160px]">
                 <a href="https://wa.me/2340000000000" target="_blank" rel="noopener noreferrer">
@@ -171,23 +192,40 @@ function TrackDetail() {
                   </div>
 
                   <div className="mt-8 grid gap-4 border-t border-border pt-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
-                    <Detail label={t("track.origin")} value={`${data.shipment.sender_city ?? ""}, ${data.shipment.sender_country ?? ""}`} />
-                    <Detail label={t("track.destination")} value={`${data.shipment.destination_city ?? ""}, ${data.shipment.destination_country ?? ""}`} />
+                    <Detail
+                      label={t("track.origin")}
+                      value={`${data.shipment.sender_city ?? ""}, ${data.shipment.sender_country ?? ""}`}
+                    />
+                    <Detail
+                      label={t("track.destination")}
+                      value={`${data.shipment.destination_city ?? ""}, ${data.shipment.destination_country ?? ""}`}
+                    />
                     <Detail label={t("track.serviceType")} value={data.shipment.delivery_type} />
-                    <Detail label={t("track.package")} value={data.shipment.package_description ?? "—"} />
+                    <Detail
+                      label={t("track.package")}
+                      value={data.shipment.package_description ?? "—"}
+                    />
                   </div>
                 </div>
 
                 <div className="mt-6">
-                  <TrackingTimeline events={data.events} currentStatus={data.shipment.current_status} />
+                  <TrackingTimeline
+                    events={data.events}
+                    currentStatus={data.shipment.current_status}
+                  />
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-                  <h3 className="mb-4 text-display text-lg font-semibold">{t("track.packageDetails")}</h3>
+                  <h3 className="mb-4 text-display text-lg font-semibold">
+                    {t("track.packageDetails")}
+                  </h3>
                   <div className="space-y-4">
-                    <Detail label={t("track.contents")} value={data.shipment.package_contents ?? "—"} />
+                    <Detail
+                      label={t("track.contents")}
+                      value={data.shipment.package_contents ?? "—"}
+                    />
                     <Detail label={t("track.quantity")} value={String(data.shipment.quantity)} />
                     <Detail label={t("track.weight")} value={`${data.shipment.weight_kg} kg`} />
                   </div>
@@ -200,11 +238,21 @@ function TrackDetail() {
                     </div>
                     <div className="mt-2 space-y-3 text-sm">
                       <Detail label={t("track.receivedBy")} value={data.delivery.receiver_name} />
-                      <Detail label={t("track.dateTime")} value={formatDateTime(data.delivery.delivered_at)} />
-                      <Detail label={t("track.deliveredBy")} value={data.delivery.delivered_by_name ?? "—"} />
+                      <Detail
+                        label={t("track.dateTime")}
+                        value={formatDateTime(data.delivery.delivered_at)}
+                      />
+                      <Detail
+                        label={t("track.deliveredBy")}
+                        value={data.delivery.delivered_by_name ?? "—"}
+                      />
                     </div>
                     {data.delivery.photo_url && (
-                      <img src={data.delivery.photo_url} alt="Proof of delivery" className="mt-4 max-h-64 rounded-lg border" />
+                      <img
+                        src={data.delivery.photo_url}
+                        alt="Proof of delivery"
+                        className="mt-4 max-h-64 rounded-lg border"
+                      />
                     )}
                     {data.delivery.note && <p className="mt-3 text-sm">{data.delivery.note}</p>}
                   </div>
@@ -250,7 +298,9 @@ function StatusCard(props: {
         <Detail
           label={t("track.currentStatus")}
           value={
-            <span className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(props.status)}`}>
+            <span
+              className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(props.status)}`}
+            >
               {statusLabel(props.status)}
             </span>
           }
@@ -258,7 +308,9 @@ function StatusCard(props: {
         <Detail
           label={t("track.deliveryHealth")}
           value={
-            <span className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${healthBadgeClass(p.health)}`}>
+            <span
+              className={`mt-1 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${healthBadgeClass(p.health)}`}
+            >
               <ShieldCheck className="h-3 w-3" /> {healthLabel(p.health)}
             </span>
           }
@@ -267,7 +319,9 @@ function StatusCard(props: {
         <Detail label={t("track.expectedDelivery")} value={formatDate(props.expected)} />
 
         <div className="border-t border-border pt-4">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">{t("track.timeRemaining")}</div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">
+            {t("track.timeRemaining")}
+          </div>
           <div className="mt-1 font-bold text-foreground">{p.countdownLabel}</div>
         </div>
 
@@ -321,7 +375,9 @@ function ProgressHero(props: {
 
       <div className="relative mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">{t("track.trackingNumber")}</div>
+          <div className="text-[11px] uppercase tracking-[0.25em] text-white/60">
+            {t("track.trackingNumber")}
+          </div>
           <div className="text-display text-2xl font-bold md:text-3xl">{props.tracking}</div>
         </div>
         <div className="text-right text-sm">
@@ -365,7 +421,19 @@ function ProgressHero(props: {
   );
 }
 
-function PartyCard({ title, name, phone, loc, address }: { title: string; name: string; phone?: string | null; loc: (string | null)[]; address?: string | null }) {
+function PartyCard({
+  title,
+  name,
+  phone,
+  loc,
+  address,
+}: {
+  title: string;
+  name: string;
+  phone?: string | null;
+  loc: (string | null)[];
+  address?: string | null;
+}) {
   return (
     <div className="rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-accent/5">
       <div className="text-xs font-semibold uppercase tracking-wider text-pme-red">{title}</div>
