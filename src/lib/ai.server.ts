@@ -60,12 +60,12 @@ export const chatWithAI = createServerFn({ method: "POST" })
                 .maybeSingle(),
             ]);
 
-          const progress = computeShipmentProgress({
-            departure_date: shipment.departure_date,
-            expected_arrival_date: shipment.expected_arrival_date,
-            current_status: shipment.current_status,
-            delivered_at: delivery?.delivered_at,
-          });
+            const progress = computeShipmentProgress({
+              departure_date: shipment.departure_date,
+              expected_arrival_date: shipment.expected_arrival_date,
+              current_status: shipment.current_status,
+              delivered_at: delivery?.delivered_at,
+            });
 
             shipmentData = {
               tracking_number: shipment.tracking_number,
@@ -118,10 +118,71 @@ SUPPORT CHANNELS:
 
       let assistantMessage = "";
 
-      if (!apiKey) {
-        console.warn("OPENAI_API_KEY is not set, using rule-based fallback.");
+      // 1. Try OpenAI if API Key is present
+      if (apiKey) {
+        try {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+              model: "gpt-4o",
+              messages: [
+                { role: "system", content: systemPrompt },
+                ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
+                { role: "user", content: message },
+              ],
+              temperature: 0.7,
+            }),
+          });
 
-        // Rule-based fallback logic
+          if (response.ok) {
+            const aiData = await response.json();
+            assistantMessage = aiData.choices[0].message.content;
+          } else {
+            const errorData = await response.json();
+            console.warn(
+              "OpenAI API error, falling back to Pollinations:",
+              errorData.error?.message,
+            );
+          }
+        } catch (e) {
+          console.warn("OpenAI fetch failed, falling back to Pollinations:", e);
+        }
+      }
+
+      // 2. Try Pollinations AI (Free) if OpenAI wasn't used or failed
+      if (!assistantMessage) {
+        try {
+          const response = await fetch("https://text.pollinations.ai/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: [
+                { role: "system", content: systemPrompt },
+                ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
+                { role: "user", content: message },
+              ],
+              model: "openai",
+            }),
+          });
+
+          if (response.ok) {
+            assistantMessage = await response.text();
+          } else {
+            console.warn("Pollinations AI error, using rule-based fallback.");
+          }
+        } catch (e) {
+          console.warn("Pollinations AI failed, using rule-based fallback:", e);
+        }
+      }
+
+      // 3. Last Resort: Rule-based fallback
+      if (!assistantMessage) {
         if (shipmentData) {
           assistantMessage =
             `I found shipment ${shipmentData.tracking_number}. It is currently "${shipmentData.current_status}".\n\n` +
@@ -166,31 +227,6 @@ SUPPORT CHANNELS:
               "I am Jules AI, your virtual logistics assistant. I can help you track shipments, explain our services, or connect you with support. How can I help you today?";
           }
         }
-      } else {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: [
-              { role: "system", content: systemPrompt },
-              ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
-              { role: "user", content: message },
-            ],
-            temperature: 0.7,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error?.message || "OpenAI API error");
-        }
-
-        const aiData = await response.json();
-        assistantMessage = aiData.choices[0].message.content;
       }
 
       try {
