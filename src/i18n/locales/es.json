@@ -172,5 +172,27 @@
     "downloadImage": "Descargar imagen",
     "share": "Compartir",
     "print": "Imprimir"
+  },
+  "ai": {
+    "name": "Priority AI",
+    "assistant": "Asistente Priority",
+    "welcome": "Hola 👋 Bienvenido a Priority Mail Express. Soy Priority AI, su asistente logístico virtual. Puedo ayudarle a rastrear envíos, explicar nuestros servicios, verificar recibos y conectarle con soporte.",
+    "inputPlaceholder": "Pregúnteme cualquier cosa...",
+    "actions": {
+      "track": "Rastrear mi envío",
+      "howWorks": "Cómo funciona el envío",
+      "verify": "Verificar recibo",
+      "times": "Tiempos de entrega",
+      "intl": "Envíos internacionales",
+      "support": "Contactar soporte",
+      "faq": "Preguntas frecuentes",
+      "viewFullDetails": "Ver detalles completos de seguimiento"
+    },
+    "support": {
+      "whatsapp": "Soporte por WhatsApp",
+      "email": "Soporte por Email",
+      "phone": "Soporte Telefónico",
+      "live": "Soporte en vivo"
+    }
   }
 }

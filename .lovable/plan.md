@@ -14,6 +14,7 @@ A full logistics + shipment tracking platform is a large build. I'll deliver it 
 ## Design direction
 
 DHL/FedEx/UPS-grade corporate logistics UI:
+
 - Palette: PME Red `#E1131D`, Navy `#0B1E3F`, White, Light Grey `#F4F6F8`, Slate text.
 - Typography: Inter (body) + Space Grotesk (display) for bold headings.
 - Components: dense pro tables, status pill badges, stepper timeline, KPI cards, polished forms.

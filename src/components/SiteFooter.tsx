@@ -20,9 +20,18 @@ function useTriggerInstall() {
       window.matchMedia?.("(display-mode: standalone)").matches ||
       (window.navigator as unknown as { standalone?: boolean }).standalone === true;
 
-    if (standalone) { toast.success(t("common.appInstalled")); return; }
-    if (ev) { ev.prompt(); return; }
-    if (isIOS) { toast.info(t("common.appInstallHintIOS")); return; }
+    if (standalone) {
+      toast.success(t("common.appInstalled"));
+      return;
+    }
+    if (ev) {
+      ev.prompt();
+      return;
+    }
+    if (isIOS) {
+      toast.info(t("common.appInstallHintIOS"));
+      return;
+    }
     toast.info(t("common.appInstallHintOther"));
   };
 }
@@ -45,7 +54,9 @@ export function SiteFooter() {
           </button>
         </div>
         <div>
-          <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">{t("footer.services")}</div>
+          <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">
+            {t("footer.services")}
+          </div>
           <ul className="space-y-2 text-sm text-white/70">
             <li>{t("footer.serviceList.international")}</li>
             <li>{t("footer.serviceList.express")}</li>
@@ -55,10 +66,20 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">{t("footer.support")}</div>
+          <div className="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">
+            {t("footer.support")}
+          </div>
           <ul className="space-y-2 text-sm text-white/70">
-            <li><Link to="/track" className="hover:text-white">{t("nav.track")}</Link></li>
-            <li><Link to="/verify" className="hover:text-white">{t("nav.verify")}</Link></li>
+            <li>
+              <Link to="/track" className="hover:text-white">
+                {t("nav.track")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/verify" className="hover:text-white">
+                {t("nav.verify")}
+              </Link>
+            </li>
             <li>support@prioritymailexpress.com</li>
             <li>+1 (800) PME-SHIP</li>
           </ul>
@@ -71,7 +92,9 @@ export function SiteFooter() {
             className="absolute bottom-2 left-2 h-2 w-2 rounded-full bg-white/10 cursor-default"
             aria-label="Staff"
           />
-          <div>© {new Date().getFullYear()} Priority Mail Express. {t("footer.rights")}</div>
+          <div>
+            © {new Date().getFullYear()} Priority Mail Express. {t("footer.rights")}
+          </div>
         </div>
       </div>
     </footer>

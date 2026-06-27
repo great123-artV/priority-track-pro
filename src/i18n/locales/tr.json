@@ -1,1 +1,22 @@
-{}
+{
+  "ai": {
+    "name": "Priority AI",
+    "welcome": "Hello 👋 Welcome to Priority Mail Express. I'm Priority AI, your virtual logistics assistant. I can help you track shipments, explain our services, verify receipts, and connect you with support.",
+    "inputPlaceholder": "Ask me anything...",
+    "actions": {
+      "track": "Track My Shipment",
+      "howWorks": "How Shipping Works",
+      "verify": "Verify Receipt",
+      "times": "Delivery Times",
+      "intl": "International Shipping",
+      "support": "Contact Support",
+      "faq": "FAQs",
+      "viewFullDetails": "View Full Tracking Details"
+    },
+    "support": {
+      "whatsapp": "WhatsApp Support",
+      "email": "Email Support",
+      "phone": "Phone Support"
+    }
+  }
+}

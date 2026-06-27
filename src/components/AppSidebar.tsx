@@ -1,7 +1,14 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Package, PlusCircle, Truck, Users, Building2,
-  UserCog, BarChart3, LogOut,
+  LayoutDashboard,
+  Package,
+  PlusCircle,
+  Truck,
+  Users,
+  Building2,
+  UserCog,
+  BarChart3,
+  LogOut,
 } from "lucide-react";
 import { LogoLockup } from "./Logo";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,7 +59,11 @@ export function AppSidebar() {
         })}
       </nav>
       <div className="border-t border-sidebar-border p-3">
-        <Button variant="ghost" className="w-full justify-start text-white/80 hover:bg-sidebar-accent hover:text-white" onClick={signOut}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-white/80 hover:bg-sidebar-accent hover:text-white"
+          onClick={signOut}
+        >
           <LogOut className="mr-2 h-4 w-4" /> Sign out
         </Button>
       </div>
