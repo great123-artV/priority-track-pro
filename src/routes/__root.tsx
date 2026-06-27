@@ -10,7 +10,13 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { InstallAppPrompt } from "@/components/InstallAppPrompt";
-import { initI18n } from "@/i18n/config";
+import { PriorityAI } from "@/components/PriorityAI";
+import i18n, { initI18n } from "@/i18n/config";
+
+// Initialize i18n for both client and server contexts
+if (!i18n.isInitialized) {
+  initI18n();
+}
 
 function NotFoundComponent() {
   return (
@@ -101,7 +107,6 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  useEffect(() => { initI18n(); }, []);
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
@@ -115,6 +120,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <Outlet />
       <InstallAppPrompt />
+      <PriorityAI />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );

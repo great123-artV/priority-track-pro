@@ -154,5 +154,36 @@
     "downloadImage": "Download Image",
     "share": "Share",
     "print": "Print"
+  },
+  "ai": {
+    "greeting": "Hello 👋",
+    "welcome": "Welcome to Priority Mail Express.",
+    "intro": "I'm Priority AI, your virtual logistics assistant.",
+    "canHelp": "I can help you:",
+    "helpItems": {
+      "track": "Track your shipment",
+      "process": "Explain our delivery process",
+      "services": "Guide you through our services",
+      "questions": "Answer logistics questions",
+      "support": "Connect you with customer support"
+    },
+    "ask": "How may I assist you today?",
+    "inputPlaceholder": "Ask Priority AI...",
+    "actions": {
+      "track": "Track My Shipment",
+      "services": "Shipping Services",
+      "times": "Delivery Times",
+      "international": "International Shipping",
+      "pricing": "Pricing Information",
+      "branches": "Locate a Branch",
+      "support": "Contact Support",
+      "faq": "Frequently Asked Questions"
+    },
+    "viewTracking": "View Full Tracking Details",
+    "liveSupport": "Live Support Coming Soon",
+    "whatsapp": "WhatsApp Support",
+    "email": "Email Support",
+    "phone": "Phone Support",
+    "error": "I encountered an error. Please try again."
   }
 }
