@@ -83,7 +83,13 @@ export function statusProgress(status: ShipmentStatus): number {
   return STATUS_PROGRESS_MAP[status] ?? 5;
 }
 
-export type DeliveryHealth = "scheduled" | "on_schedule" | "almost_due" | "delayed" | "delivered" | "cancelled";
+export type DeliveryHealth =
+  | "scheduled"
+  | "on_schedule"
+  | "almost_due"
+  | "delayed"
+  | "delivered"
+  | "cancelled";
 
 export interface ShipmentProgress {
   health: DeliveryHealth;
@@ -121,10 +127,12 @@ export const STATUS_MESSAGES: Partial<Record<ShipmentStatus, string>> = {
   processing_sorting: "Your shipment is being processed at our sorting center.",
   dispatched_origin: "Your shipment has been dispatched from the origin hub.",
   in_transit: "Your shipment is currently moving through our logistics network.",
-  arrived_destination: "Your shipment has arrived near the destination and is being prepared for delivery.",
+  arrived_destination:
+    "Your shipment has arrived near the destination and is being prepared for delivery.",
   out_for_delivery: "Your shipment is with a delivery officer and will be delivered soon.",
   delivered: "Your shipment has been delivered successfully.",
-  delayed: "Your shipment requires attention. Please contact Priority Mail Express support for an update.",
+  delayed:
+    "Your shipment requires attention. Please contact Priority Mail Express support for an update.",
   cancelled: "This shipment has been cancelled.",
 };
 
@@ -152,11 +160,22 @@ export function computeShipmentProgress(args: {
 
   let health: DeliveryHealth = "on_schedule";
   let healthLabel = "On Schedule";
-  if (phase === "cancelled") { health = "cancelled"; healthLabel = "Cancelled"; }
-  else if (phase === "delivered") { health = "delivered"; healthLabel = "Delivered"; }
-  else if (phase === "overdue" || args.current_status === "delayed") { health = "delayed"; healthLabel = "Delayed"; }
-  else if (phase === "pre_departure") { health = "scheduled"; healthLabel = "Scheduled"; }
-  else if (remainingMs > 0 && remainingMs < 24 * 3600 * 1000) { health = "almost_due"; healthLabel = "Almost Due"; }
+  if (phase === "cancelled") {
+    health = "cancelled";
+    healthLabel = "Cancelled";
+  } else if (phase === "delivered") {
+    health = "delivered";
+    healthLabel = "Delivered";
+  } else if (phase === "overdue" || args.current_status === "delayed") {
+    health = "delayed";
+    healthLabel = "Delayed";
+  } else if (phase === "pre_departure") {
+    health = "scheduled";
+    healthLabel = "Scheduled";
+  } else if (remainingMs > 0 && remainingMs < 24 * 3600 * 1000) {
+    health = "almost_due";
+    healthLabel = "Almost Due";
+  }
 
   let combined = Math.max(timeProgressPct, statusProgressPct);
   if (args.current_status !== "delivered") combined = Math.min(combined, 95);
@@ -167,7 +186,9 @@ export function computeShipmentProgress(args: {
   let countdownDetail = "";
   if (phase === "delivered") {
     countdownLabel = "Delivered successfully";
-    countdownDetail = args.delivered_at ? `Delivered on ${formatDateTime(args.delivered_at)}` : "Delivery complete.";
+    countdownDetail = args.delivered_at
+      ? `Delivered on ${formatDateTime(args.delivered_at)}`
+      : "Delivery complete.";
   } else if (phase === "cancelled") {
     countdownLabel = "Shipment cancelled";
     countdownDetail = "This shipment is no longer active.";
@@ -179,31 +200,42 @@ export function computeShipmentProgress(args: {
     countdownDetail = "Your shipment is moving within the expected delivery timeframe.";
   } else if (phase === "overdue") {
     countdownLabel = `Overdue by ${formatCountdown(Math.abs(remainingMs), false)}`;
-    countdownDetail = "Delivery requires attention. Shipment has exceeded the expected delivery timeframe.";
+    countdownDetail =
+      "Delivery requires attention. Shipment has exceeded the expected delivery timeframe.";
   }
 
   const message = STATUS_MESSAGES[args.current_status] ?? countdownDetail;
 
   return {
-    health, healthLabel,
+    health,
+    healthLabel,
     progressPct: Math.round(combined),
     timeProgressPct: Math.round(timeProgressPct),
     statusProgressPct,
-    countdownLabel, countdownDetail,
+    countdownLabel,
+    countdownDetail,
     message,
-    totalMs, elapsedMs, remainingMs,
+    totalMs,
+    elapsedMs,
+    remainingMs,
     phase,
   };
 }
 
 export function healthBadgeClass(h: DeliveryHealth): string {
   switch (h) {
-    case "delivered": return "bg-success/10 text-success border-success/30";
-    case "on_schedule": return "bg-info/10 text-info border-info/30";
-    case "scheduled": return "bg-navy/10 text-navy border-navy/30";
-    case "almost_due": return "bg-warning/15 text-warning-foreground border-warning/40";
-    case "delayed": return "bg-destructive/10 text-destructive border-destructive/30";
-    case "cancelled": return "bg-muted text-muted-foreground border-border";
+    case "delivered":
+      return "bg-success/10 text-success border-success/30";
+    case "on_schedule":
+      return "bg-info/10 text-info border-info/30";
+    case "scheduled":
+      return "bg-navy/10 text-navy border-navy/30";
+    case "almost_due":
+      return "bg-warning/15 text-warning-foreground border-warning/40";
+    case "delayed":
+      return "bg-destructive/10 text-destructive border-destructive/30";
+    case "cancelled":
+      return "bg-muted text-muted-foreground border-border";
   }
 }
 
@@ -214,14 +246,21 @@ export function formatMoney(n: number | null | undefined, currency = "USD") {
 export function formatDateTime(d: string | Date | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleString("en-US", {
-    year: "numeric", month: "short", day: "2-digit",
-    hour: "2-digit", minute: "2-digit",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 export function formatDate(d: string | Date | null | undefined) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" });
+  return new Date(d).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 }
 
 // Absolute production site URL — used for QR codes and shareable links so they

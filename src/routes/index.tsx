@@ -2,8 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Globe2, Zap, ShieldCheck, QrCode, FileCheck2, Headphones,
-  Search, BadgeCheck, ArrowRight,
+  Globe2,
+  Zap,
+  ShieldCheck,
+  QrCode,
+  FileCheck2,
+  Headphones,
+  Search,
+  BadgeCheck,
+  ArrowRight,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -15,9 +22,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Priority Mail Express — International Special Delivery" },
-      { name: "description", content: "Track international shipments, verify receipts, and ship with confidence. Premium logistics by Priority Mail Express." },
+      {
+        name: "description",
+        content:
+          "Track international shipments, verify receipts, and ship with confidence. Premium logistics by Priority Mail Express.",
+      },
       { property: "og:title", content: "Priority Mail Express — International Special Delivery" },
-      { property: "og:description", content: "Track international shipments, verify receipts, and ship with confidence." },
+      {
+        property: "og:description",
+        content: "Track international shipments, verify receipts, and ship with confidence.",
+      },
     ],
   }),
   component: Landing,
@@ -57,7 +71,13 @@ function Landing() {
         <SiteHeader />
 
         <section className="relative overflow-hidden bg-gradient-hero text-white">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
+            }}
+          />
           <div className="container relative mx-auto grid gap-10 px-4 py-20 md:grid-cols-2 md:py-28">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.2em]">
@@ -68,10 +88,21 @@ function Landing() {
               </h1>
               <p className="max-w-lg text-white/80 md:text-lg">{t("home.heroSubtitle")}</p>
               <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-                  <Link to="/track">{t("home.trackCta")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90"
+                >
+                  <Link to="/track">
+                    {t("home.trackCta")} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-white hover:bg-white/15">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-white/30 bg-white/5 text-white hover:bg-white/15"
+                >
                   <Link to="/verify">{t("home.verifyCta")}</Link>
                 </Button>
               </div>
@@ -84,7 +115,10 @@ function Landing() {
               </div>
               <p className="mb-5 text-sm text-white/70">{t("home.trackBoxSubtitle")}</p>
               <form
-                onSubmit={(e) => { e.preventDefault(); handleSearch("track"); }}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSearch("track");
+                }}
                 className="space-y-3"
               >
                 <Input
@@ -94,7 +128,11 @@ function Landing() {
                   className="h-12 border-white/20 bg-white text-foreground placeholder:text-muted-foreground"
                 />
                 <div className="grid grid-cols-2 gap-3">
-                  <Button type="submit" size="lg" className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90"
+                  >
                     {t("home.trackCta")}
                   </Button>
                   <Button
@@ -108,25 +146,40 @@ function Landing() {
                   </Button>
                 </div>
               </form>
-              <div className="mt-4 text-xs text-white/60">{t("common.tip")}: {t("common.scanTip")}</div>
+              <div className="mt-4 text-xs text-white/60">
+                {t("common.tip")}: {t("common.scanTip")}
+              </div>
             </div>
           </div>
         </section>
 
         <section className="container mx-auto px-4 py-20">
           <div className="mb-12 text-center">
-            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">{t("home.featuresEyebrow")}</div>
-            <h2 className="mt-2 text-display text-3xl font-bold md:text-4xl">{t("home.featuresTitle")}</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{t("home.featuresSubtitle")}</p>
+            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-pme-red">
+              {t("home.featuresEyebrow")}
+            </div>
+            <h2 className="mt-2 text-display text-3xl font-bold md:text-4xl">
+              {t("home.featuresTitle")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+              {t("home.featuresSubtitle")}
+            </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {FEATURE_KEYS.map(({ key, icon: Icon }) => (
-              <div key={key} className="group rounded-xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-0.5 hover:shadow-elevated">
+              <div
+                key={key}
+                className="group rounded-xl border border-border bg-card p-6 shadow-card transition hover:-translate-y-0.5 hover:shadow-elevated"
+              >
                 <div className="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-navy text-navy-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-display text-lg font-semibold">{t(`home.features.${key}.title`)}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{t(`home.features.${key}.desc`)}</p>
+                <h3 className="text-display text-lg font-semibold">
+                  {t(`home.features.${key}.title`)}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {t(`home.features.${key}.desc`)}
+                </p>
               </div>
             ))}
           </div>
@@ -137,4 +190,3 @@ function Landing() {
     </>
   );
 }
-

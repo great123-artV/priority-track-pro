@@ -54,9 +54,12 @@ function VerifyDetail() {
             <XCircle className="mx-auto h-10 w-10 text-destructive" />
             <h1 className="mt-3 text-display text-2xl font-bold">Receipt not verified</h1>
             <p className="mt-2 text-muted-foreground">
-              No receipt matches <span className="font-mono">{receipt}</span>. Please check the receipt number and try again.
+              No receipt matches <span className="font-mono">{receipt}</span>. Please check the
+              receipt number and try again.
             </p>
-            <Button asChild className="mt-5"><Link to="/verify">Try again</Link></Button>
+            <Button asChild className="mt-5">
+              <Link to="/verify">Try again</Link>
+            </Button>
           </div>
         )}
 
@@ -65,9 +68,12 @@ function VerifyDetail() {
             <ShieldAlert className="mx-auto h-10 w-10 text-warning" />
             <h1 className="mt-3 text-display text-2xl font-bold">Verification code required</h1>
             <p className="mt-2 text-muted-foreground">
-              A receipt was found, but you must also enter the 6-character verification code printed on the receipt to confirm authenticity.
+              A receipt was found, but you must also enter the 6-character verification code printed
+              on the receipt to confirm authenticity.
             </p>
-            <Button asChild className="mt-5"><Link to="/verify">Enter verification code</Link></Button>
+            <Button asChild className="mt-5">
+              <Link to="/verify">Enter verification code</Link>
+            </Button>
           </div>
         )}
 
@@ -76,10 +82,13 @@ function VerifyDetail() {
             <XCircle className="mx-auto h-10 w-10 text-destructive" />
             <h1 className="mt-3 text-display text-2xl font-bold">Invalid verification code</h1>
             <p className="mt-2 text-muted-foreground">
-              The code <span className="font-mono font-semibold">{code}</span> does not match receipt{" "}
-              <span className="font-mono">{receipt}</span>. This receipt may be forged or the code was mistyped.
+              The code <span className="font-mono font-semibold">{code}</span> does not match
+              receipt <span className="font-mono">{receipt}</span>. This receipt may be forged or
+              the code was mistyped.
             </p>
-            <Button asChild className="mt-5"><Link to="/verify">Try again</Link></Button>
+            <Button asChild className="mt-5">
+              <Link to="/verify">Try again</Link>
+            </Button>
           </div>
         )}
 
@@ -103,16 +112,28 @@ function VerifyDetail() {
               <Row label="Created" value={formatDateTime(data.created_at)} />
               <Row
                 label="Origin Branch"
-                value={data.origin ? `${data.origin.name} — ${data.origin.city}, ${data.origin.country}` : "—"}
+                value={
+                  data.origin
+                    ? `${data.origin.name} — ${data.origin.city}, ${data.origin.country}`
+                    : "—"
+                }
               />
-              <Row label="Destination" value={`${data.destination_city ?? ""}, ${data.destination_country ?? ""}`} />
+              <Row
+                label="Destination"
+                value={`${data.destination_city ?? ""}, ${data.destination_country ?? ""}`}
+              />
               <Row label="Payment" value={PAYMENT_LABELS[data.payment_status]} />
-              <Row label="Total" value={`${data.currency} ${Number(data.total_amount).toFixed(2)}`} />
+              <Row
+                label="Total"
+                value={`${data.currency} ${Number(data.total_amount).toFixed(2)}`}
+              />
             </dl>
 
             <div className="mt-6 flex gap-2">
               <Button asChild className="bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
-                <Link to="/track/$tracking" params={{ tracking: data.tracking_number }}>View Tracking</Link>
+                <Link to="/track/$tracking" params={{ tracking: data.tracking_number }}>
+                  View Tracking
+                </Link>
               </Button>
             </div>
           </div>

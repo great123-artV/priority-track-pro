@@ -15,7 +15,15 @@
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Track Shipment", "url": "/track", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Verify Receipt", "url": "/verify", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Track Shipment",
+      "url": "/track",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Verify Receipt",
+      "url": "/verify",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

@@ -11,7 +11,10 @@ export const Route = createFileRoute("/verify/")({
   head: () => ({
     meta: [
       { title: "Verify Receipt — Priority Mail Express" },
-      { name: "description", content: "Verify the authenticity of a Priority Mail Express receipt." },
+      {
+        name: "description",
+        content: "Verify the authenticity of a Priority Mail Express receipt.",
+      },
     ],
   }),
   component: VerifySearch,
@@ -65,7 +68,11 @@ function VerifySearch() {
               className="h-12 font-mono tracking-[0.4em] uppercase"
             />
           </div>
-          <Button type="submit" size="lg" className="w-full bg-pme-red text-pme-red-foreground hover:bg-pme-red/90">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full bg-pme-red text-pme-red-foreground hover:bg-pme-red/90"
+          >
             {t("verify.verifyCta")}
           </Button>
         </form>

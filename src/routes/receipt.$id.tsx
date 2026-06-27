@@ -5,7 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { QRCodeImage, BarcodeImage } from "@/components/QRCodeImage";
 import { Logo } from "@/components/Logo";
-import { formatDate, formatDateTime, formatMoney, getVerificationCode, trackingUrl, verifyUrl } from "@/lib/pme";
+import {
+  formatDate,
+  formatDateTime,
+  formatMoney,
+  getVerificationCode,
+  trackingUrl,
+  verifyUrl,
+} from "@/lib/pme";
 import { Printer, Download, ArrowLeft, Share2, FileImage, Check, X, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -42,7 +49,7 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
       // Fix potential grid issues that cause logo or elements to jump/resize
       // We force the header to use flexbox for the capture to ensure stability
       const header = el.firstElementChild as HTMLElement;
-      if (header && header.classList.contains('grid')) {
+      if (header && header.classList.contains("grid")) {
         header.style.display = "flex";
         header.style.flexDirection = "row";
         header.style.alignItems = "center";
@@ -143,9 +150,10 @@ const getHtml2CanvasConfig = (sourceRef: React.RefObject<HTMLDivElement>) => ({
     clonedDoc.querySelectorAll("svg").forEach((svg) => {
       svg.setAttribute("fill", "#0B1E3F");
       svg.setAttribute("stroke", "#0B1E3F");
-      svg.querySelectorAll("*").forEach(child => {
+      svg.querySelectorAll("*").forEach((child) => {
         if (child.getAttribute("fill")?.includes("oklch")) child.setAttribute("fill", "#0B1E3F");
-        if (child.getAttribute("stroke")?.includes("oklch")) child.setAttribute("stroke", "#0B1E3F");
+        if (child.getAttribute("stroke")?.includes("oklch"))
+          child.setAttribute("stroke", "#0B1E3F");
       });
     });
   },
@@ -165,7 +173,9 @@ function ReceiptPage() {
     queryFn: async () => {
       const { data: s } = await supabase
         .from("shipments")
-        .select("*, origin:branches!shipments_origin_branch_id_fkey(name,city,country,address,phone)")
+        .select(
+          "*, origin:branches!shipments_origin_branch_id_fkey(name,city,country,address,phone)",
+        )
         .eq("id", id)
         .maybeSingle();
       return s;
@@ -175,7 +185,9 @@ function ReceiptPage() {
   useEffect(() => {
     if (data?.expected_arrival_date) {
       const date = new Date(data.expected_arrival_date);
-      setNewTime(date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }));
+      setNewTime(
+        date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }),
+      );
     }
   }, [data?.expected_arrival_date]);
 
@@ -231,21 +243,25 @@ function ReceiptPage() {
     const toastId = toast.loading("Preparing receipt image…");
     try {
       const canvas = await captureCanvas();
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          toast.error("Generation failed", { id: toastId });
-          return;
-        }
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.download = `PME-Receipt-${data.receipt_number}.png`;
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 500);
-        toast.success("Receipt image saved", { id: toastId });
-      }, "image/png", 1.0);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            toast.error("Generation failed", { id: toastId });
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.download = `PME-Receipt-${data.receipt_number}.png`;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 500);
+          toast.success("Receipt image saved", { id: toastId });
+        },
+        "image/png",
+        1.0,
+      );
     } catch (error) {
       console.error("Image download failed", error);
       toast.error("Couldn't download image. Try again.", { id: toastId });
@@ -269,7 +285,11 @@ function ReceiptPage() {
       const fileName = `PME-Receipt-${data.receipt_number}.png`;
       const file = new File([blob], fileName, { type: "image/png" });
       try {
-        if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+        if (
+          typeof navigator !== "undefined" &&
+          navigator.canShare &&
+          navigator.canShare({ files: [file] })
+        ) {
           await navigator.share({
             files: [file],
             title: `PME Receipt ${data.receipt_number}`,
@@ -376,7 +396,10 @@ function ReceiptPage() {
         </div>
 
         {/* Receipt — premium airway bill */}
-        <div ref={ref} className="print-area mx-auto bg-white text-foreground shadow-[0_30px_80px_-30px_rgba(11,30,63,0.35)] ring-1 ring-navy/10">
+        <div
+          ref={ref}
+          className="print-area mx-auto bg-white text-foreground shadow-[0_30px_80px_-30px_rgba(11,30,63,0.35)] ring-1 ring-navy/10"
+        >
           {/* Header */}
           <div className="relative flex items-center justify-between gap-3 border-b border-slate-300 px-8 pt-6 pb-4">
             <div className="w-[120px] flex-shrink-0">
@@ -387,10 +410,18 @@ function ReceiptPage() {
               </div>
             </div>
             <div className="flex-1 text-center">
-              <div className="text-display text-3xl font-extrabold leading-tight text-pme-red">Priority Mail Express</div>
-              <div className="mt-0.5 text-[12px] font-semibold italic text-navy">International Special Delivery</div>
-              <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">Destination</div>
-              <div className="text-display text-lg font-bold uppercase text-navy">{data.receiver_country ?? "—"}</div>
+              <div className="text-display text-3xl font-extrabold leading-tight text-pme-red">
+                Priority Mail Express
+              </div>
+              <div className="mt-0.5 text-[12px] font-semibold italic text-navy">
+                International Special Delivery
+              </div>
+              <div className="mt-2 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500">
+                Destination
+              </div>
+              <div className="text-display text-lg font-bold uppercase text-navy">
+                {data.receiver_country ?? "—"}
+              </div>
             </div>
             <div className="w-[120px] flex-shrink-0 flex justify-end">
               <Logo className="h-16 w-auto object-contain" />
@@ -400,18 +431,30 @@ function ReceiptPage() {
           {/* FROM / SHIP TO */}
           <div className="flex border-b border-slate-300">
             <div className="flex-1 border-r border-slate-300">
-              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">FROM</div>
+              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">
+                FROM
+              </div>
               <div className="space-y-2.5 px-5 py-4 text-[13px]">
                 <Field label="SENDER NAME" value={data.sender_name} />
-                <Field label="COUNTRY / CITY" value={[data.sender_city, data.sender_country].filter(Boolean).join(", ") || "—"} />
+                <Field
+                  label="COUNTRY / CITY"
+                  value={[data.sender_city, data.sender_country].filter(Boolean).join(", ") || "—"}
+                />
                 {data.sender_phone && <Field label="PHONE" value={data.sender_phone} />}
               </div>
             </div>
             <div className="flex-1">
-              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">SHIP TO</div>
+              <div className="bg-slate-400/70 py-1.5 text-center text-[12px] font-bold tracking-[0.2em] text-white">
+                SHIP TO
+              </div>
               <div className="space-y-2.5 px-5 py-4 text-[13px]">
                 <Field label="RECEIVER NAME" value={data.receiver_name} />
-                <Field label="COUNTRY / CITY" value={[data.receiver_city, data.receiver_country].filter(Boolean).join(", ") || "—"} />
+                <Field
+                  label="COUNTRY / CITY"
+                  value={
+                    [data.receiver_city, data.receiver_country].filter(Boolean).join(", ") || "—"
+                  }
+                />
                 <Field label="HOME ADDRESS" value={data.receiver_address ?? "—"} />
               </div>
             </div>
@@ -420,7 +463,9 @@ function ReceiptPage() {
           {/* Delivery time + courier */}
           <div className="flex border-b border-slate-300 px-6 py-4 text-[13px]">
             <div className="flex-1 text-center group relative border-r border-slate-300">
-              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">DELIVERY TIME</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
+                DELIVERY TIME
+              </div>
               <div className="mt-1 flex items-center justify-center gap-2">
                 {isEditingTime ? (
                   <div className="flex items-center gap-1">
@@ -446,10 +491,17 @@ function ReceiptPage() {
                       className="w-32 rounded border border-slate-300 px-2 py-0.5 text-center text-sm font-semibold text-navy focus:border-pme-red focus:outline-none"
                       autoFocus
                     />
-                    <button onClick={saveDeliveryTime} disabled={isSaving} className="text-emerald-600 hover:text-emerald-700">
+                    <button
+                      onClick={saveDeliveryTime}
+                      disabled={isSaving}
+                      className="text-emerald-600 hover:text-emerald-700"
+                    >
                       <Check className="h-4 w-4" />
                     </button>
-                    <button onClick={() => setIsEditingTime(false)} className="text-rose-600 hover:text-rose-700">
+                    <button
+                      onClick={() => setIsEditingTime(false)}
+                      className="text-rose-600 hover:text-rose-700"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </div>
@@ -477,43 +529,77 @@ function ReceiptPage() {
           {/* Charges + contents */}
           <div className="flex gap-4 border-b border-slate-300 px-6 py-5 text-[13px]">
             <div className="flex-1 border-r border-slate-300 pr-4">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Shipment registration charge</div>
-              <div className="mt-0.5 text-display text-base font-bold text-navy">{formatMoney(data.registration_charge, data.currency)}</div>
-              <div className="mt-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Custom clearance charge</div>
-              <div className="mt-0.5 text-display text-base font-bold text-navy">{formatMoney(data.custom_clearance_charge, data.currency)}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Shipment registration charge
+              </div>
+              <div className="mt-0.5 text-display text-base font-bold text-navy">
+                {formatMoney(data.registration_charge, data.currency)}
+              </div>
+              <div className="mt-2.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Custom clearance charge
+              </div>
+              <div className="mt-0.5 text-display text-base font-bold text-navy">
+                {formatMoney(data.custom_clearance_charge, data.currency)}
+              </div>
             </div>
             <div className="w-[140px] text-center border-r border-slate-300 pr-4">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Piece / Weight</div>
-              <div className="mt-1 text-display text-base font-bold text-navy">{String(data.quantity).padStart(2, "0")} | {data.weight_kg}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Piece / Weight
+              </div>
+              <div className="mt-1 text-display text-base font-bold text-navy">
+                {String(data.quantity).padStart(2, "0")} | {data.weight_kg}
+              </div>
             </div>
             <div className="flex-1 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Contents</div>
-              <div className="mt-1 text-[13px] font-semibold text-navy leading-snug">{data.package_contents ?? data.package_description ?? "—"}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Contents
+              </div>
+              <div className="mt-1 text-[13px] font-semibold text-navy leading-snug">
+                {data.package_contents ?? data.package_description ?? "—"}
+              </div>
             </div>
           </div>
 
           {/* Dates */}
           <div className="flex border-b border-slate-300 px-6 py-4 text-[13px]">
             <div className="flex-1 border-r border-slate-300">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Departure Date</div>
-              <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.departure_date)}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Departure Date
+              </div>
+              <div className="mt-1 text-display text-base font-bold text-navy">
+                {formatDate(data.departure_date)}
+              </div>
             </div>
             <div className="flex-1 text-right">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Arrival Date</div>
-              <div className="mt-1 text-display text-base font-bold text-navy">{formatDate(data.expected_arrival_date)}</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Arrival Date
+              </div>
+              <div className="mt-1 text-display text-base font-bold text-navy">
+                {formatDate(data.expected_arrival_date)}
+              </div>
             </div>
           </div>
 
           {/* Barcode */}
           <div className="flex flex-col items-center border-b border-slate-300 px-6 py-6">
             <BarcodeImage value={data.tracking_number} className="max-w-md" />
-            <div className="mt-2 font-mono text-sm tracking-wider text-foreground">{data.tracking_number}</div>
-            <div className="mt-1 text-[11px] text-muted-foreground">Receipt: {data.receipt_number} · Issued {formatDateTime(data.created_at)}</div>
-            <div className="mt-3 flex items-center gap-2 rounded-md border border-pme-red/30 bg-pme-red/5 px-3 py-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-pme-red">Verification Code</span>
-              <span className="font-mono text-base font-bold tracking-[0.35em] text-navy">{getVerificationCode(data.receipt_number)}</span>
+            <div className="mt-2 font-mono text-sm tracking-wider text-foreground">
+              {data.tracking_number}
             </div>
-            <div className="mt-1 text-[10px] text-slate-500">Confirm authenticity at prioritymailexpress.com/verify</div>
+            <div className="mt-1 text-[11px] text-muted-foreground">
+              Receipt: {data.receipt_number} · Issued {formatDateTime(data.created_at)}
+            </div>
+            <div className="mt-3 flex items-center gap-2 rounded-md border border-pme-red/30 bg-pme-red/5 px-3 py-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-pme-red">
+                Verification Code
+              </span>
+              <span className="font-mono text-base font-bold tracking-[0.35em] text-navy">
+                {getVerificationCode(data.receipt_number)}
+              </span>
+            </div>
+            <div className="mt-1 text-[10px] text-slate-500">
+              Confirm authenticity at prioritymailexpress.com/verify
+            </div>
           </div>
 
           {/* QR + Trust */}
@@ -529,7 +615,10 @@ function ReceiptPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="rounded-md bg-white p-1 ring-1 ring-slate-300">
-                <QRCodeImage value={verifyUrl(data.receipt_number, getVerificationCode(data.receipt_number))} size={72} />
+                <QRCodeImage
+                  value={verifyUrl(data.receipt_number, getVerificationCode(data.receipt_number))}
+                  size={72}
+                />
               </div>
               <div className="text-[11px] leading-tight text-slate-600">
                 <div className="font-semibold text-navy">Scan to verify authenticity</div>
@@ -537,7 +626,9 @@ function ReceiptPage() {
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-md border border-slate-300 bg-slate-50 px-4 py-2">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Secured · Safe Shopping</div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                Secured · Safe Shopping
+              </div>
               <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
                 <span className="rounded bg-blue-700 px-1.5 py-0.5 text-white">VISA</span>
                 <span className="rounded bg-slate-800 px-1.5 py-0.5 text-white">MC</span>
@@ -549,7 +640,8 @@ function ReceiptPage() {
 
           {/* Footer */}
           <div className="border-t border-slate-300 bg-slate-50 px-6 py-3 text-center text-[10px] text-slate-600">
-            This receipt is system-generated and verifiable online · Priority Mail Express · International Special Delivery · support@prioritymailexpress.com
+            This receipt is system-generated and verifiable online · Priority Mail Express ·
+            International Special Delivery · support@prioritymailexpress.com
           </div>
         </div>
       </div>
@@ -560,7 +652,9 @@ function ReceiptPage() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">{label}</div>
+      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">
+        {label}
+      </div>
       <div className="mt-0.5 text-[13px] font-medium text-navy">{value}</div>
     </div>
   );
@@ -568,7 +662,9 @@ function Field({ label, value }: { label: string; value: string }) {
 function CenterField({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">{label}</div>
+      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700">
+        {label}
+      </div>
       <div className="mt-1 text-display text-base font-semibold text-navy">{value}</div>
     </div>
   );
