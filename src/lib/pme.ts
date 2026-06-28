@@ -268,7 +268,7 @@ export function formatDate(d: string | Date | null | undefined) {
 export const SITE_URL: string = (() => {
   const fromEnv = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_SITE_URL;
   if (fromEnv && fromEnv.length > 0) return fromEnv.replace(/\/$/, "");
-  return "https://priority-track-pro.lovable.app";
+  return "https://priority-mail-express.vercel.app";
 })();
 
 export function trackingUrl(tracking: string) {
